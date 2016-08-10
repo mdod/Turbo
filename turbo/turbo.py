@@ -13,6 +13,8 @@ import datetime
 import json
 import os
 from colorama import Fore
+from functools import wraps
+from discord.ext.commands.bot import _get_variable
 
 from .exceptions import FatalError, printError
 from .config import Config
@@ -24,6 +26,20 @@ class Turbo(discord.Client):
         super().__init__()
         self.config = Config()
         self._reload()
+
+    def no_private(func):
+        """
+        Decorator to disallow using a command in a PrivateChannel
+        """
+        @wraps(func)
+        async def wrapper(self, *args, **kwargs):
+            msg = _get_variable('message')
+
+            if not msg or not msg.channel.is_private:
+                return await func(self, *args, **kwargs)
+            else:
+                return False
+        return wrapper
 
     def _reload(self):
         """
@@ -123,11 +139,9 @@ class Turbo(discord.Client):
         """
         await self.wait_until_ready()  # Ensure that the client is ready
 
-        if message.channel.is_private:
-            return  # Don't do anything else if the channel is private
-
         if message.author != self.user:
-            await self._handle_autoresponses(message)
+            if not message.channel.is_private:
+                await self._handle_autoresponses(message)
             # Don't do anything else if the message wasn't sent by the user
             return
 
@@ -315,6 +329,7 @@ class Turbo(discord.Client):
         else:
             await self.safe_edit_message(message, ":warning: No tag found: **{}**".format(tag), delete_after=30)
 
+    @no_private
     async def cmd_reload(self, message):
         """
         Reloads the bot's files
