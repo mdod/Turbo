@@ -1,8 +1,3 @@
 {
-    "applications": "<https://discordapp.com/developers/applications/me>",
-    "android beta": "📲 **Discord Android Beta:** <https://play.google.com/apps/testing/com.discord>",
-    "ios beta": "📲 **Discord iOS Beta:** Apply here: <https://docs.google.com/forms/d/1kNHRTAoQwRTtH-u6sME9kQKeEwSf5Sib_B2kWkh70xs/viewform?c=0&w=1>",
-    "canary server": "🏡 **Canary Discord Server:** http://discord.gg/discord-testers",
-    "website": "<http://jaydenkieran.com>",
-    "twitter": "<http://twitter.com/jaydenkieran>"
+    "testtag": "hello!"
 }

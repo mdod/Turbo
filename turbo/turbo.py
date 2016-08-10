@@ -98,12 +98,12 @@ class Turbo(discord.Client):
             printError(
                 "No permission to delete message: {}".format(message.id))
 
-    async def safe_send_message(self, dest, content, tts=False, delete_after=0):
+    async def safe_send_message(self, dest, content, delete_after=0):
         """
         Allows sending a message safely
         """
         try:
-            msg = await self.send_message(dest, content, tts=tts)
+            msg = await self.send_message(dest, content)
             if msg and delete_after:
                 asyncio.ensure_future(self._delete_msg(msg, delete_after))
         except discord.HTTPException:
@@ -131,6 +131,10 @@ class Turbo(discord.Client):
         """
         Called when the bot is connected successfully
         """
+        if self.user.bot:
+            print(Fore.YELLOW + """Warning: Detected you are running this bot on an oAuth account
+While not intended, it is possible for this bot to run on these accounts.
+Some commands may work weird, and additionally, they can be triggered by everyone""" + Fore.RESET)
         print('Logged in as {}\n'.format(self.user))
 
     async def on_message(self, message):
@@ -143,7 +147,8 @@ class Turbo(discord.Client):
             if not message.channel.is_private:
                 await self._handle_autoresponses(message)
             # Don't do anything else if the message wasn't sent by the user
-            return
+            if not self.user.bot:
+                return
 
         content = message.content.strip()
         if not content.startswith(self.config.prefix):
@@ -212,12 +217,18 @@ class Turbo(discord.Client):
                     params.pop(key)
 
             if params:
-                await self.safe_edit_message(message, ":warning: Invalid usage: `{}{}`".format(self.config.prefix, command), delete_after=10)
+                await self._check_bot(message, ":warning: Invalid usage: `{}{}`".format(self.config.prefix, command), delete_after=10)
                 return
 
             response = await handler(**handler_kwargs)
         except Exception:
             traceback.print_exc()
+
+    async def _check_bot(self, msgobj, str_to_send, delete_after=0):
+        if not self.user.bot:
+            await self.safe_edit_message(msgobj, str_to_send, delete_after)
+        else:
+            await self.safe_send_message(msgobj.channel, str_to_send, delete_after)
 
     async def cmd_eval(self, message, args, leftover_args):
         """
@@ -238,7 +249,7 @@ class Turbo(discord.Client):
             result = traceback.format_exc()
         endtime = datetime.datetime.now()
         diff = endtime - starttime
-        await self.safe_edit_message(message, "```python\n# Input\n{}\n# Output\n{}\n```\n:stopwatch: Time taken: `{}`".format(args, result, diff))
+        await self._check_bot(message, "```python\n# Input\n{}\n# Output\n{}\n```\n:stopwatch: Time taken: `{}`".format(args, result, diff))
 
     async def cmd_discrim(self, message, discrim):
         """
@@ -251,9 +262,9 @@ class Turbo(discord.Client):
                 if m.name not in matches:
                     matches.append(m.name)
         if not matches:
-            return await self.safe_edit_message(message, ":warning: No names found with discriminator **{}**".format(discrim), delete_after=30)
+            return await self._check_bot(message, ":warning: No names found with discriminator **{}**".format(discrim), delete_after=30)
         matches = '`, `'.join(matches)
-        await self.safe_edit_message(message, ":label: Names with discriminator **{}**\n`{}`".format(discrim, matches))
+        await self._check_bot(message, ":label: Names with discriminator **{}**\n`{}`".format(discrim, matches))
 
     async def cmd_emoji(self, message, name):
         """
@@ -261,7 +272,7 @@ class Turbo(discord.Client):
         """
         emoji = discord.utils.get(self.get_all_emojis(), name=name)
         if not emoji:
-            return await self.safe_edit_message(message, ":warning: No emoji found with name **{}**".format(name), delete_after=30)
+            return await self._check_bot(message, ":warning: No emoji found with name **{}**".format(name), delete_after=30)
         servers = []
         for s in self.servers:
             semoji = discord.utils.get(s.emojis, name=name)
@@ -270,7 +281,7 @@ class Turbo(discord.Client):
         servers = '`, `'.join(servers)
         response = ":performing_arts: **{0.name}**\nServers: `{1}`\n{0.url}".format(
             emoji, servers)
-        await self.safe_edit_message(message, response)
+        await self._check_bot(message, response)
 
     async def cmd_snowflake(self, message, id):
         """
@@ -278,12 +289,12 @@ class Turbo(discord.Client):
         """
         time = discord.utils.snowflake_time(id)
         if not time:
-            return await self.safe_edit_message(message, ":warning: No user found with ID **{}**".format(id), delete_after=30)
+            return await self._check_bot(message, ":warning: No user found with ID **{}**".format(id), delete_after=30)
         user = discord.utils.get(self.get_all_members(), id=id)
         if user:
-            await self.safe_edit_message(message, ":snowflake: {0.name}#{0.discriminator} (**{0.id}**) was created at: `{1}`".format(user, time))
+            await self._check_bot(message, ":snowflake: {0.name}#{0.discriminator} (**{0.id}**) was created at: `{1}`".format(user, time))
         else:
-            await self.safe_edit_message(message, ":snowflake: **{}** was created at: `{}`".format(id, time))
+            await self._check_bot(message, ":snowflake: **{}** was created at: `{}`".format(id, time))
 
     async def cmd_status(self, message, status, leftover_args):
         """
@@ -295,28 +306,28 @@ class Turbo(discord.Client):
         except discord.InvalidArgument:
             printError(
                 'Invalid argument when changing status to: {}'.format(status))
-        await self.safe_edit_message(message, ":speech_left: Status set to **{}**".format(status), delete_after=30)
+        await self._check_bot(message, ":speech_left: Status set to **{}**".format(status), delete_after=30)
 
     async def cmd_strike(self, message, content, leftover_args):
         """
         Helper command to strike through text
         """
         content = ' '.join([content, *leftover_args])
-        await self.safe_edit_message(message, "~~{}~~".format(content))
+        await self._check_bot(message, "~~{}~~".format(content))
 
     async def cmd_italics(self, message, content, leftover_args):
         """
         Helper command to italicalize text
         """
         content = ' '.join([content, *leftover_args])
-        await self.safe_edit_message(message, "*{}*".format(content))
+        await self._check_bot(message, "*{}*".format(content))
 
     async def cmd_bold(self, message, content, leftover_args):
         """
         Helper command to strike through text
         """
         content = ' '.join([content, *leftover_args])
-        await self.safe_edit_message(message, "**{}**".format(content))
+        await self._check_bot(message, "**{}**".format(content))
 
     async def cmd_tag(self, message, tag, leftover_args):
         """
@@ -325,9 +336,9 @@ class Turbo(discord.Client):
         tag = ' '.join([tag, *leftover_args])
         if tag in self.tags.keys():
             response = self.tags[tag]
-            await self.safe_edit_message(message, response)
+            await self._check_bot(message, response)
         else:
-            await self.safe_edit_message(message, ":warning: No tag found: **{}**".format(tag), delete_after=30)
+            await self._check_bot(message, ":warning: No tag found: **{}**".format(tag), delete_after=30)
 
     @no_private
     async def cmd_reload(self, message):
@@ -335,4 +346,4 @@ class Turbo(discord.Client):
         Reloads the bot's files
         """
         self._reload()
-        await self.safe_edit_message(message, ":package: Reloaded", delete_after=5)
+        await self._check_bot(message, ":package: Reloaded", delete_after=5)

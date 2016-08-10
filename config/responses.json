@@ -1,22 +1,3 @@
 {
-    "129489631539494912": {
-        "voice channel's id": "!tag ids",
-        "id of a voice channel": "!tag ids",
-        "voice channel id": "!tag ids",
-        "id for the voice channel": "!tag ids",
-        "voice channels id": "!tag ids",
-        "No module named 'discord'": "!tag deps",
-        "AttributeError: 'WebSocketClientProtocol' object has no attribute 'wait_for'": "!tag deps",
-        "bot is not on any servers": "!tag oauth",
-        "AttributeError: '<class 'musicbot.bot.MusicBot'>' object has no attribute 'http'": "!tag deps",
-        "AttributeError: '<class 'musicbot.bot.MusicBot'>' object has no attribute 'headers'": "!tag latest",
-        "Could not find JS function 'ur'": "!tag deps",
-        "Source contains parsing errors": "!tag parsing",
-        "RuntimeError: PyNaCl library needed in order to use voice": "!tag latest",
-        "Please commit your changes or stash them before you can merge": "!tag gitreset",
-        "vcvarsall": "!tag pip",
-        "Could not find JS function 'wr'": "!tag deps",
-        "destination path 'MusicBot' already exists": "!tag path",
-        "fatal: could not create work tree dir 'MusicBot': Permission denied": "!tag gitbashnoperms"
-    }
+    
 }
