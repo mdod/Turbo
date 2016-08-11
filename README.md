@@ -35,6 +35,7 @@ Other options:
 * `Prefix` - The prefix used before all of the bot's commands
 * `Messages` - The amount of messages for the client to cache (for use in `$echo`)
 * `Flip` - Comma seperated list of possible responses to the `$flip` command
+* `Autorespond` - Boolean for if the bot's autoresponding feature is enabled or not
 * `Moderator` - Comma seperated list of user IDs that can use the `$disable` command in emergencies
 
 There are two files in JSON format which allow for adding tags and autoresponses. Bare in mind: Autoresponses are bad practice in selfbots and should not be used in a public server, only private ones. Either of these files **can** be deleted and the bot will function fine without them, though the `$tag` command won't work if `tags.json` is deleted, and autoresponses will never be triggered if `responses.json` doesn't exist.
