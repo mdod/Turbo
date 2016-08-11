@@ -56,27 +56,27 @@ To add tags, use `tags.json`. An example tag is already in the file when you dow
 You can also blacklist user IDs from triggering autoresponses (or using the bot, if using it as a standalone one) by putting an ID on a new line in the `blacklist.txt` file.
 
 # Commands
-* `$tag <name>` - Triggers a tag
-* `$removetag <name>` - Removes a tag with given name
-* `$cleartags` - Removes all tags
-* `$eval <code>` - Allows you to evaluate Python code
-* `$discrim <discrim>` - Displays all visible users with discriminator given
-* `$emoji <emoji as string>` - Displays information about a custom emoji
-* `$snowflake <id>` - Get the creation time in UTC of a Discord ID
-* `$status <status>` - Change the user's status
-* `$strike <text>` - Strikes out text (replica of using `~~text~~`)
-* `$bold <text>` - Bolds text (replica of using `**text**`)
-* `$italics <text>` - Italicalises text (replica of using `*text*`)
-* `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
-* `$echo <id>` - Echos a message via it's ID (must be saved in cache)
-* `$flip` - Flips an imaginary object
-* `$random <number>` - Returns a random number between 1 and the number given
-* `$serverregion <region>` - Switch the server to a different region
-* `$servername <name>` - Rename the server
-* `$disable` - Disables the bot temporarily
-* `$enable` - Re-enables the bot
-* `$timer <minutes:seconds>` - Starts a timer
-* `$listtimers` - Returns a list of all running timers
+* :pencil2: `$tag <name>` - Triggers a tag
+* :pencil2: `$removetag <name>` - Removes a tag with given name
+* :pencil2: `$cleartags` - Removes all tags
+* :floppy_disk: `$eval <code>` - Allows you to evaluate Python code
+* :hammer: `$discrim <discrim>` - Displays all visible users with discriminator given
+* :couple: `$emoji <emoji as string>` - Displays information about a custom emoji
+* :snowflake: `$snowflake <id>` - Get the creation time in UTC of a Discord ID
+* :speech_balloon: `$status <status>` - Change the user's status
+* :abc: `$strike <text>` - Strikes out text (replica of using `~~text~~`)
+* :abc: `$bold <text>` - Bolds text (replica of using `**text**`)
+* :abc: `$italics <text>` - Italicalises text (replica of using `*text*`)
+* :repeat: `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
+* :mega: `$echo <id>` - Echos a message via it's ID (must be saved in cache)
+* :arrow_right_hook: `$flip` - Flips an imaginary object
+* :1234: `$random <number>` - Returns a random number between 1 and the number given
+* :earth_americas: `$serverregion <region>` - Switch the server to a different region
+* :name_badge: `$servername <name>` - Rename the server
+* :no_entry_sign: `$disable` - Disables the bot temporarily
+* :white_check_mark: `$enable` - Re-enables the bot
+* :alarm_clock: `$timer <minutes:seconds>` - Starts a timer
+* :alarm_clock: `$listtimers` - Returns a list of all running timers
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.
