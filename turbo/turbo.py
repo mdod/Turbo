@@ -439,6 +439,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             printError("Editing the server failed: {}".format(server))
             return False
 
+    @no_private
     async def cmd_region(self, message, server, region):
         """
         Switches server region to given region
