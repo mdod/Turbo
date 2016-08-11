@@ -385,8 +385,46 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         msg = discord.utils.get(self.messages, id=id)
         if not msg:
             return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
-        response = ":information_source: Posted by **{}** in <#{}> at `{}`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, msg.timestamp, msg.content)
+        now = datetime.datetime.utcnow()
+        rawdiff = now-msg.timestamp
+        time = ""
+        secdiff = int(rawdiff.seconds%60)
+        mindiff = int(rawdiff.seconds/60)
+        hourdiff = int(rawdiff.seconds/60/60)
+        if hourdiff > 0:
+            if hourdiff == 1:
+                time += "{} hour and ".format(hourdiff)
+            else:
+                time += "{} hours and ".format(hourdiff)
+        if mindiff > 0:
+            if mindiff == 1:
+                time += "{} minute and ".format(mindiff)
+            else:
+                time += "{} minutes and ".format(mindiff)
+        if secdiff == 1:
+            time += "{} second".format(secdiff)
+        else:
+            time += "{} seconds".format(secdiff)
+        response = ":information_source: Posted by **{}** in <#{}> `{} ago`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, time, msg.content)
         return await self._check_bot(message, response)
+
+    async def cmd_msginfo(self, message, id):
+        """
+        Tries to show different information about a message
+        This will fail if the client recieves a lot of messages
+        """
+        msg = discord.utils.get(self.messages, id=id)
+        if not msg:
+            return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
+        if msg.channel.is_private:
+            server = "Private message"
+        else:
+            server = msg.server.name
+        if not msg.channel.name:
+            channel = msg.channel.user
+        else:
+            channel = "<#{}>".format(msg.channel.id)
+        return await self._check_bot(message, ":information_source: Here's the info on that message:\nServer: {}\nChannel: {}\nAuthor: {}\nTime sent in UTC: {}\nContent:\n{}".format(server, channel, msg.author, msg.timestamp, msg.clean_content))
 
     async def cmd_flip(self, message):
         """
