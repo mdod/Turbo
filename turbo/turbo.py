@@ -411,7 +411,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Removes a tag with specified name
         """
         if name not in self.tags.keys():
-            return await self._check_bot(message, ":warning: The tag **{}** doesn't exist".format(name))
+            return await self._check_bot(message, ":warning: The tag **{}** doesn't exist".format(name), delete_after=30)
         del self.tags[name]
         self._reload(save=True)
         return await self._check_bot(message, ":white_check_mark: Removed tag **{}**".format(name))
@@ -424,3 +424,27 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         self.tags.clear()
         self._reload(save=True)
         return await self._check_bot(message, ":white_check_mark: Cleared all tags")
+
+    async def cmd_region(self, message, server, region):
+        """
+        Switches server region to given region
+        """
+        regionattr = getattr(discord.ServerRegion, region, None)
+        if not regionattr:
+            regions = []
+            for i in dir(discord.ServerRegion):
+                if "__" in i:
+                    continue
+                regions.append(i)
+            regions = '`, `'.join(regions)
+            return await self._check_bot(message, ":warning: Invalid region. Valid regions are:\n`{}`".format(regions))
+        try:
+            await self.edit_server(server, region=region)
+        except discord.Forbidden:
+            return await self._check_bot(message, ":warning: No permission to edit this server", delete_after=30)
+        except discord.NotFound:
+            printError("Server wasn't found while trying to edit it: {}".format(server))
+        except discord.HTTPException:
+            printError("Editing the server failed: {}".format(server))
+            return await self._check_bot(message, ":warning: Editing the server failed", delete_after=30)
+        return await self._check_bot(message, ":white_check_mark: Changed server region to **{}**".format(region))
