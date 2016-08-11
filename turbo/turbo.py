@@ -604,17 +604,24 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         url = data['file']
         return await self._check_bot(message, url)
 
+    def _get_config_attr(self, attribute):
+        attr = getattr(self.config, attribute, None)
+        return attr
+
     async def cmd_holidays(self, message, leftover_args):
         """
         Returns information about upcoming holidays
         """
+        if not self._get_config_attr('holidays_key'):
+            return await self._check_bot(message, ":warning: You must specify an API key in the config", delete_after=30)
+
         now = datetime.datetime.now()
         if leftover_args:
             country = ' '.join([*leftover_args])
             country = country.upper()
             if country not in self.holidays_countries:
                 valid = '`, `'.join(self.holidays_countries)
-                return await self._check_bot(message, ":warning: Invalid country. Valid countries are: `{}`".format(valid))
+                return await self._check_bot(message, ":warning: Invalid country. Valid countries are: `{}`".format(valid), delete_after=30)
         else:
             country = self.config.holidays_country
         data = self._get_json_from_url('https://holidayapi.com/v1/holidays?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
@@ -622,7 +629,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         if data['status'] != 200:
             printError(
                 "Couldn't get holiday info, returned {}".format(data['status']))
-            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(data['status']))
+            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(data['status']), delete_after=30)
         response = "Upcoming holidays for **{}**\n".format(
             country)
         for h in data['holidays']:
