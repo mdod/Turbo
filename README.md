@@ -37,6 +37,7 @@ Other options:
 * `Flip` - Comma seperated list of possible responses to the `$flip` command
 * `Autorespond` - Boolean for if the bot's autoresponding feature is enabled or not
 * `Moderator` - Comma seperated list of user IDs that can use the `$disable` command in emergencies
+* **For API-specific options**, see [apis.md](apis.md).
 
 There are two files in JSON format which allow for adding tags and autoresponses. Bare in mind: Autoresponses are bad practice in selfbots and should not be used in a public server, only private ones. Either of these files **can** be deleted and the bot will function fine without them, though the `$tag` command won't work if `tags.json` is deleted, and autoresponses will never be triggered if `responses.json` doesn't exist.
 
@@ -78,6 +79,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :alarm_clock: `$timer <minutes:seconds>` - Starts a timer
 * :alarm_clock: `$listtimers` - Returns a list of all running timers
 * :cat: `$cat` - Sends a random cat picture
+* :city_sunrise: `$holidays [country code]` - Gets upcoming holiday info for country
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.
@@ -101,3 +103,5 @@ These exceptions can be raised:
 
 # License
 This project is licensed under the **MIT License**. It is available in [LICENSE.md](LICENSE.md).
+
+For API-specific credits, see [apis.md](apis.md).
