@@ -61,5 +61,6 @@ class ConfigDefaults:
     prefix = '$'
     messages = 5000
     flip = "Heads, Tails"
+    autorespond = False
 
     moderator = []

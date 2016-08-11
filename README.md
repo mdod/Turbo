@@ -75,6 +75,8 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * `$servername <name>` - Rename the server
 * `$disable` - Disables the bot temporarily
 * `$enable` - Re-enables the bot
+* `$timer <minutes:seconds>` - Starts a timer
+* `$listtimers` - Returns a list of all running timers
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.

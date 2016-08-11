@@ -33,6 +33,9 @@ class Turbo(discord.Client):
         self.blacklist = set(load_file('config/blacklist.txt'))
         self.disabled = False
 
+        self.timers = []
+        self.timer_failure = ":warning: Provide time in a format such as **01:00** for one minute"
+
     def no_private(func):
         """
         Decorator to disallow using a command in a PrivateChannel
@@ -528,3 +531,50 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         self.disabled = False
         print(Fore.YELLOW + "{} enabled the bot".format(message.author))
         return await self._check_bot(message, ":white_check_mark:", delete_after=5)
+
+    async def _handle_timer(self, timer_dict):
+        """
+        Handler for the timer command
+        """
+        await asyncio.sleep(int(timer_dict['totalseconds']))
+        if timer_dict['author'] != self.user:
+            await self.safe_send_message(timer_dict['channel'], ":stopwatch: {}, your `{}:{}` timer finished".format(timer_dict['author'].mention, timer_dict['minutes'], timer_dict['seconds']))
+        else:
+            await self.safe_send_message(timer_dict['channel'], ":stopwatch: `{}:{}` timer finished".format(timer_dict['minutes'], timer_dict['seconds']))
+        self.timers.remove(timer_dict)
+
+    async def cmd_timer(self, message, time):
+        """
+        Sets a timer, which will send another message in the channel when complete
+        """
+        if ":" not in time:
+            return await self._check_bot(message, self.timer_failure, delete_after=30)
+        minutes = time.rpartition(':')[0]
+        seconds = time.split(":", 1)[1]
+        if ":" in minutes or ":" in seconds:
+            return await self._check_bot(message, self.timer_failure, delete_after=30)
+        try:
+            minutes = int(minutes)
+            seconds = int(seconds)
+        except ValueError:
+            return await self._check_bot(message, self.timer_failure, delete_after=30)
+
+        time_to_wait = datetime.timedelta(minutes=minutes, seconds=seconds)
+        totalseconds = time_to_wait.total_seconds()
+        timer_dict = {'author': message.author, 'channel': message.channel, 'server': message.server, 'timestamp': message.timestamp, 'minutes': minutes, 'seconds': seconds, 'totalseconds': totalseconds}
+        self.timers.append(timer_dict)
+        asyncio.ensure_future(self._handle_timer(timer_dict))
+        return await self._check_bot(message, ":white_check_mark: Timer set for **{}** minutes, **{}** seconds".format(minutes, seconds))
+
+    async def cmd_listtimers(self, message):
+        """
+        Provides a list of all active timers
+        """
+        response = ":stopwatch: All **running** timers\n```"
+        if self.timers:
+            for t in self.timers:
+                response += "\n{} - {}:{} - {}/{} - {}".format(t['author'], t['minutes'], t['seconds'], t['server'], t['channel'], t['timestamp'])
+        else:
+            response += "\nNone"
+        response += "\n```"
+        return await self._check_bot(message, response)
