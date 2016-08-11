@@ -77,6 +77,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :white_check_mark: `$enable` - Re-enables the bot
 * :alarm_clock: `$timer <minutes:seconds>` - Starts a timer
 * :alarm_clock: `$listtimers` - Returns a list of all running timers
+* :cat: `$cat` - Sends a random cat picture
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.
@@ -90,6 +91,7 @@ These methods exist to compliment various built-in discord.py methods:
 These methods are utility functions:
 * `_check_bot(msg, str)` - Checks if the bot is running on a bot account or user account. If user account, assume selfbot and edit the message. If oauth, assume standalone and send a message to the channel instead.
 * `_delete_msg(msg, time)` - Deletes a message after a period of time (in seconds)
+* `_get_json_from_url(url)` - Gets the JSON data at a URL, decodes it to UTF-8, and returns it
 
 The following decorators can be used:
 * `@no_private` - Disallows a command being used in a [PrivateChannel](http://discordpy.readthedocs.io/en/latest/api.html#discord.PrivateChannel)

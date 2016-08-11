@@ -13,6 +13,7 @@ import datetime
 import json
 import os
 import random
+import urllib.request
 from colorama import Fore
 from functools import wraps
 from discord.ext.commands.bot import _get_variable
@@ -578,3 +579,20 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             response += "\nNone"
         response += "\n```"
         return await self._check_bot(message, response)
+
+    def _get_json_from_url(self, url):
+        """
+        Utility function for getting JSON from a URL
+        """
+        response = urllib.request.urlopen(url).read()
+        data = json.loads(response.decode('utf-8'))
+        return data
+
+    async def cmd_cat(self, message):
+        """
+        Pastes the link to a random cat picture
+        Why not?
+        """
+        data = self._get_json_from_url('http://random.cat/meow')
+        url = data['file']
+        return await self._check_bot(message, url)
