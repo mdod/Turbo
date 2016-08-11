@@ -37,6 +37,9 @@ class Turbo(discord.Client):
         self.timers = []
         self.timer_failure = ":warning: Provide time in a format such as **01:00** for one minute"
 
+        self.holidays_countries = ['BE', 'BG', 'BR', 'CA', 'CZ', 'DE', 'ES', 'FR', 'GB',
+                                   'GT', 'HR', 'HU', 'ID', 'IN', 'IT', 'NL', 'NO', 'PL', 'PR', 'SI', 'SK', 'US']
+
     def no_private(func):
         """
         Decorator to disallow using a command in a PrivateChannel
@@ -183,7 +186,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 else:
                     blacklist.append(id)
             blacklist = ', '.join(blacklist)
-            print('{}Blacklisted: {}{}'.format(Fore.YELLOW, blacklist, Fore.RESET))
+            print('{}Blacklisted: {}{}'.format(
+                Fore.YELLOW, blacklist, Fore.RESET))
         print()
 
     async def on_message(self, message):
@@ -430,7 +434,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         msg = discord.utils.get(self.messages, id=id)
         if not msg:
             return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
-        response = ":information_source: Posted by **{}** in <#{}> at `{}`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, msg.timestamp, msg.content)
+        response = ":information_source: Posted by **{}** in <#{}> at `{}`\n――――――――――――――――――――――――\n{}".format(
+            msg.author, msg.channel.id, msg.timestamp, msg.content)
         return await self._check_bot(message, response)
 
     async def cmd_flip(self, message):
@@ -481,7 +486,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             printError("No permission to edit: {}".format(server))
             return False
         except discord.NotFound:
-            printError("Server wasn't found while trying to edit it: {}".format(server))
+            printError(
+                "Server wasn't found while trying to edit it: {}".format(server))
             return False
         except discord.HTTPException:
             printError("Editing the server failed: {}".format(server))
@@ -562,7 +568,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
 
         time_to_wait = datetime.timedelta(minutes=minutes, seconds=seconds)
         totalseconds = time_to_wait.total_seconds()
-        timer_dict = {'author': message.author, 'channel': message.channel, 'server': message.server, 'timestamp': message.timestamp, 'minutes': minutes, 'seconds': seconds, 'totalseconds': totalseconds}
+        timer_dict = {'author': message.author, 'channel': message.channel, 'server': message.server,
+                      'timestamp': message.timestamp, 'minutes': minutes, 'seconds': seconds, 'totalseconds': totalseconds}
         self.timers.append(timer_dict)
         asyncio.ensure_future(self._handle_timer(timer_dict))
         return await self._check_bot(message, ":white_check_mark: Timer set for **{}** minutes, **{}** seconds".format(minutes, seconds))
@@ -574,7 +581,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         response = ":stopwatch: All **running** timers\n```"
         if self.timers:
             for t in self.timers:
-                response += "\n{} - {}:{} - {}/{} - {}".format(t['author'], t['minutes'], t['seconds'], t['server'], t['channel'], t['timestamp'])
+                response += "\n{} - {}:{} - {}/{} - {}".format(
+                    t['author'], t['minutes'], t['seconds'], t['server'], t['channel'], t['timestamp'])
         else:
             response += "\nNone"
         response += "\n```"
@@ -591,8 +599,37 @@ Some commands may work weird, and additionally, they can be triggered by everyon
     async def cmd_cat(self, message):
         """
         Pastes the link to a random cat picture
-        Why not?
         """
         data = self._get_json_from_url('http://random.cat/meow')
         url = data['file']
         return await self._check_bot(message, url)
+
+    async def cmd_holidays(self, message, leftover_args):
+        """
+        Returns information about upcoming holidays
+        """
+        now = datetime.datetime.now()
+        if leftover_args:
+            country = ' '.join([*leftover_args])
+            country = country.upper()
+            if country not in self.holidays_countries:
+                valid = '`, `'.join(self.holidays_countries)
+                return await self._check_bot(message, ":warning: Invalid country. Valid countries are: `{}`".format(valid))
+        else:
+            country = self.config.holidays_country
+        data = self._get_json_from_url('https://holidayapi.com/v1/holidays?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
+            country, now.year, now.month, now.day, self.config.holidays_key))
+        if data['status'] != 200:
+            printError(
+                "Couldn't get holiday info, returned {}".format(data['status']))
+            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(data['status']))
+        response = "Upcoming holidays for **{}**\n".format(
+            country)
+        for h in data['holidays']:
+            if h['public']:
+                holiday_type = 'Public holiday'
+            else:
+                holiday_type = 'Holiday'
+            response += ":island: **{}** - {} - *{}*".format(
+                h['name'], h['date'], holiday_type)
+        return await self._check_bot(message, response)

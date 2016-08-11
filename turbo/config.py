@@ -29,6 +29,11 @@ class Config:
         self.moderator = config.get(
             'Permissions', 'Moderator', fallback=ConfigDefaults.moderator)
 
+        self.holidays_key = config.get(
+            'Holidays', 'Key', fallback=ConfigDefaults.holidays_key)
+        self.holidays_country = config.get(
+            'Holidays', 'Country', fallback=ConfigDefaults.holidays_country)
+
         self.validate()
 
     def validate(self):
@@ -64,3 +69,6 @@ class ConfigDefaults:
     autorespond = False
 
     moderator = []
+
+    holidays_key = None
+    holidays_country = "US"
