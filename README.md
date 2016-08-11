@@ -77,6 +77,7 @@ These methods exist to compliment various built-in discord.py methods:
 * `safe_send_message(msg, content, delete_after)` - Allows safe sending of a message. Checks for various exceptions. Can allow for deleting messages after a certain time.
 * `safe_edit_message(msg, content, delete_after)` - Allows safe editing of a message. Checks for various exceptions. Can allow for deleting messages after a certain time.
 * `safe_delete_message(msg)` - Allows safe deleting of a message. Checks for various exceptions.
+* `safe_edit_server(server, **kwargs)` - Allows safe editing of a server. Checks for various exceptions.
 
 These methods are utility functions:
 * `_check_bot(msg, str)` - Checks if the bot is running on a bot account or user account. If user account, assume selfbot and edit the message. If oauth, assume standalone and send a message to the channel instead.

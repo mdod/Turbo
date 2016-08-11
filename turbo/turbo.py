@@ -425,6 +425,20 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         self._reload(save=True)
         return await self._check_bot(message, ":white_check_mark: Cleared all tags")
 
+    async def safe_edit_server(self, server, **kwargs):
+        try:
+            await self.edit_server(server, **kwargs)
+            return True
+        except discord.Forbidden:
+            printError("No permission to edit: {}".format(server))
+            return False
+        except discord.NotFound:
+            printError("Server wasn't found while trying to edit it: {}".format(server))
+            return False
+        except discord.HTTPException:
+            printError("Editing the server failed: {}".format(server))
+            return False
+
     async def cmd_region(self, message, server, region):
         """
         Switches server region to given region
@@ -438,13 +452,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 regions.append(i)
             regions = '`, `'.join(regions)
             return await self._check_bot(message, ":warning: Invalid region. Valid regions are:\n`{}`".format(regions))
-        try:
-            await self.edit_server(server, region=region)
-        except discord.Forbidden:
-            return await self._check_bot(message, ":warning: No permission to edit this server", delete_after=30)
-        except discord.NotFound:
-            printError("Server wasn't found while trying to edit it: {}".format(server))
-        except discord.HTTPException:
-            printError("Editing the server failed: {}".format(server))
-            return await self._check_bot(message, ":warning: Editing the server failed", delete_after=30)
+        edit = await self.safe_edit_server(server, region=region)
+        if not edit:
+            return await self._check_bot(message, ":warning: Problem editing server region to **{}**".format(region), delete_after=30)
         return await self._check_bot(message, ":white_check_mark: Changed server region to **{}**".format(region))
