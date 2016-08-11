@@ -83,6 +83,9 @@ These methods are utility functions:
 * `_check_bot(msg, str)` - Checks if the bot is running on a bot account or user account. If user account, assume selfbot and edit the message. If oauth, assume standalone and send a message to the channel instead.
 * `_delete_msg(msg, time)` - Deletes a message after a period of time (in seconds)
 
+The following decorators can be used:
+* `@no_private` - Disallows a command being used in a [PrivateChannel](http://discordpy.readthedocs.io/en/latest/api.html#discord.PrivateChannel)
+
 These exceptions can be raised:
 * `FatalError` - Raised when the bot encounters an error that means it cannot continue
 
