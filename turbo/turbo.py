@@ -44,10 +44,13 @@ class Turbo(discord.Client):
                 return False
         return wrapper
 
-    def _reload(self):
+    def _reload(self, save=False):
         """
         Reloads required files
         """
+        if save:
+            self.save_json('config/responses.json', self.responses)
+            self.save_json('config/tags.json', self.tags)
         self.responses = self.load_json('config/responses.json')
         self.tags = self.load_json('config/tags.json')
 
@@ -60,6 +63,16 @@ class Turbo(discord.Client):
             return {}
         with open(file, encoding="utf-8") as f:
             return json.load(f)
+
+    def save_json(self, file, data):
+        """
+        Safely save a JSON file
+        """
+        if not os.path.isfile(file):
+            printError("Failed saving JSON to: {}".format(file))
+            return False
+        with open(file, 'w', encoding="utf-8") as f:
+            return json.dump(data, f, indent=4, sort_keys=True)
 
     def run(self):
         """
@@ -378,7 +391,19 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         try:
             number = int(number)
         except ValueError:
-            await self._check_bot(message, ":warning: **{}** could not be converted to a number".format(number), delete_after=30)
+            return await self._check_bot(message, ":warning: **{}** could not be converted to a number".format(number), delete_after=30)
 
         rand = range(number)
         await self._check_bot(message, ":trophy: Number generated: **{}**".format(int(random.choice(rand) + 1)))
+
+    async def cmd_addtag(self, message, name, leftover_args):
+        """
+        Adds a tag with specified name and content
+        """
+        if not leftover_args:
+            return await self._check_bot(message, ":warning: You must specify content for your tag **{}**".format(name))
+        content = ' '.join([*leftover_args])
+        if name in self.tags.keys():
+            return await self._check_bot(message, ":warning: A tag with the name **{}** already exists".format(name), delete_after=30)
+        self.tags[name] = content
+        self._reload(save=True)
