@@ -68,7 +68,8 @@ To add tags, use `tags.json`. An example tag is already in the file when you dow
 * `$echo <id>` - Echos a message via it's ID (must be saved in cache)
 * `$flip` - Flips an imaginary object
 * `$random <number>` - Returns a random number between 1 and the number given
-* `$region <region>` - Switch the server to a different region
+* `$serverregion <region>` - Switch the server to a different region
+* `$servername <name>` - Rename the server
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.

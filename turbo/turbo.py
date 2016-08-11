@@ -426,6 +426,9 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         return await self._check_bot(message, ":white_check_mark: Cleared all tags")
 
     async def safe_edit_server(self, server, **kwargs):
+        """
+        Safely edit a server
+        """
         try:
             await self.edit_server(server, **kwargs)
             return True
@@ -440,7 +443,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             return False
 
     @no_private
-    async def cmd_region(self, message, server, region):
+    async def cmd_serverregion(self, message, server, region):
         """
         Switches server region to given region
         """
@@ -457,3 +460,14 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         if not edit:
             return await self._check_bot(message, ":warning: Problem editing server region to **{}**".format(region), delete_after=30)
         return await self._check_bot(message, ":white_check_mark: Changed server region to **{}**".format(region))
+
+    @no_private
+    async def cmd_servername(self, message, server, name, leftover_args):
+        """
+        Renames a server
+        """
+        name = ' '.join([name, *leftover_args])
+        edit = await self.safe_edit_server(server, name=name)
+        if not edit:
+            return await self._check_bot(message, ":warning: Problem changing server name to **{}**".format(name), delete_after=30)
+        return await self._check_bot(message, ":white_check_mark: Changed server name to **{}**".format(name))
