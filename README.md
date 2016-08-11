@@ -54,6 +54,8 @@ To add tags, use `tags.json`. An example tag is already in the file when you dow
 
 # Commands
 * `$tag <name>` - Triggers a tag
+* `$removetag <name>` - Removes a tag with given name
+* `$cleartags` - Removes all tags
 * `$eval <code>` - Allows you to evaluate Python code
 * `$discrim <discrim>` - Displays all visible users with discriminator given
 * `$emoji <emoji as string>` - Displays information about a custom emoji

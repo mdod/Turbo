@@ -51,6 +51,7 @@ class Turbo(discord.Client):
         if save:
             self.save_json('config/responses.json', self.responses)
             self.save_json('config/tags.json', self.tags)
+            return
         self.responses = self.load_json('config/responses.json')
         self.tags = self.load_json('config/tags.json')
 
@@ -267,7 +268,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             result = traceback.format_exc()
         endtime = datetime.datetime.now()
         diff = endtime - starttime
-        await self._check_bot(message, "```python\n# Input\n{}\n# Output\n{}\n```\n:stopwatch: Time taken: `{}`".format(args, result, diff))
+        return await self._check_bot(message, "```python\n# Input\n{}\n# Output\n{}\n```\n:stopwatch: Time taken: `{}`".format(args, result, diff))
 
     async def cmd_discrim(self, message, discrim):
         """
@@ -282,7 +283,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         if not matches:
             return await self._check_bot(message, ":warning: No names found with discriminator **{}**".format(discrim), delete_after=30)
         matches = '`, `'.join(matches)
-        await self._check_bot(message, ":label: Names with discriminator **{}**\n`{}`".format(discrim, matches))
+        return await self._check_bot(message, ":label: Names with discriminator **{}**\n`{}`".format(discrim, matches))
 
     async def cmd_emoji(self, message, name):
         """
@@ -299,7 +300,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         servers = '`, `'.join(servers)
         response = ":performing_arts: **{0.name}**\nServers: `{1}`\n{0.url}".format(
             emoji, servers)
-        await self._check_bot(message, response)
+        return await self._check_bot(message, response)
 
     async def cmd_snowflake(self, message, id):
         """
@@ -310,9 +311,9 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             return await self._check_bot(message, ":warning: No user found with ID **{}**".format(id), delete_after=30)
         user = discord.utils.get(self.get_all_members(), id=id)
         if user:
-            await self._check_bot(message, ":snowflake: {0.name}#{0.discriminator} (**{0.id}**) was created at: `{1}`".format(user, time))
+            return await self._check_bot(message, ":snowflake: {0.name}#{0.discriminator} (**{0.id}**) was created at: `{1}`".format(user, time))
         else:
-            await self._check_bot(message, ":snowflake: **{}** was created at: `{}`".format(id, time))
+            return await self._check_bot(message, ":snowflake: **{}** was created at: `{}`".format(id, time))
 
     async def cmd_status(self, message, status, leftover_args):
         """
@@ -324,39 +325,48 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         except discord.InvalidArgument:
             printError(
                 'Invalid argument when changing status to: {}'.format(status))
-        await self._check_bot(message, ":speech_left: Status set to **{}**".format(status), delete_after=30)
+        return await self._check_bot(message, ":speech_left: Status set to **{}**".format(status), delete_after=30)
 
     async def cmd_strike(self, message, content, leftover_args):
         """
         Helper command to strike through text
         """
         content = ' '.join([content, *leftover_args])
-        await self._check_bot(message, "~~{}~~".format(content))
+        return await self._check_bot(message, "~~{}~~".format(content))
 
     async def cmd_italics(self, message, content, leftover_args):
         """
         Helper command to italicalize text
         """
         content = ' '.join([content, *leftover_args])
-        await self._check_bot(message, "*{}*".format(content))
+        return await self._check_bot(message, "*{}*".format(content))
 
     async def cmd_bold(self, message, content, leftover_args):
         """
         Helper command to strike through text
         """
         content = ' '.join([content, *leftover_args])
-        await self._check_bot(message, "**{}**".format(content))
+        return await self._check_bot(message, "**{}**".format(content))
+
+    async def _check_for_key(self, data, key):
+        """
+        Checks a dictionary for a key
+        """
+        for k in data.keys():
+            if k == key:
+                return k
+        return
 
     async def cmd_tag(self, message, tag, leftover_args):
         """
         Trigger a tag
         """
         tag = ' '.join([tag, *leftover_args])
-        if tag in self.tags.keys():
+        key = await self._check_for_key(self.tags, tag)
+        if key:
             response = self.tags[tag]
-            await self._check_bot(message, response)
-        else:
-            await self._check_bot(message, ":warning: No tag found: **{}**".format(tag), delete_after=30)
+            return await self._check_bot(message, response)
+        return await self._check_bot(message, ":warning: No tag found: **{}**".format(tag), delete_after=30)
 
     @no_private
     async def cmd_reload(self, message):
@@ -364,7 +374,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Reloads the bot's files
         """
         self._reload()
-        await self._check_bot(message, ":package: Reloaded", delete_after=5)
+        return await self._check_bot(message, ":package: Reloaded", delete_after=5)
 
     async def cmd_echo(self, message, id):
         """
@@ -376,13 +386,13 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         if not msg:
             return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
         response = ":information_source: Posted by **{}** in <#{}> at `{}`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, msg.timestamp, msg.content)
-        await self._check_bot(message, response)
+        return await self._check_bot(message, response)
 
     async def cmd_flip(self, message):
         """
         Flips an imaginary object
         """
-        await self._check_bot(message, ":trophy: **{}** wins!".format(random.choice(self.config.flip)))
+        return await self._check_bot(message, ":trophy: **{}** wins!".format(random.choice(self.config.flip)))
 
     async def cmd_random(self, message, number):
         """
@@ -394,16 +404,23 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             return await self._check_bot(message, ":warning: **{}** could not be converted to a number".format(number), delete_after=30)
 
         rand = range(number)
-        await self._check_bot(message, ":trophy: Number generated: **{}**".format(int(random.choice(rand) + 1)))
+        return await self._check_bot(message, ":trophy: Number generated: **{}**".format(int(random.choice(rand) + 1)))
 
-    async def cmd_addtag(self, message, name, leftover_args):
+    async def cmd_removetag(self, message, name):
         """
-        Adds a tag with specified name and content
+        Removes a tag with specified name
         """
-        if not leftover_args:
-            return await self._check_bot(message, ":warning: You must specify content for your tag **{}**".format(name))
-        content = ' '.join([*leftover_args])
-        if name in self.tags.keys():
-            return await self._check_bot(message, ":warning: A tag with the name **{}** already exists".format(name), delete_after=30)
-        self.tags[name] = content
+        if name not in self.tags.keys():
+            return await self._check_bot(message, ":warning: The tag **{}** doesn't exist".format(name))
+        del self.tags[name]
         self._reload(save=True)
+        return await self._check_bot(message, ":white_check_mark: Removed tag **{}**".format(name))
+
+    async def cmd_cleartags(self, message):
+        """
+        Clears the entire list of tags
+        Destructive - will not ask for confirmation
+        """
+        self.tags.clear()
+        self._reload(save=True)
+        return await self._check_bot(message, ":white_check_mark: Cleared all tags")
