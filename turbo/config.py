@@ -23,6 +23,8 @@ class Config:
             'Options', 'Messages', fallback=ConfigDefaults.messages)
         self.flip = config.get(
             'Options', 'Flip', fallback=ConfigDefaults.flip)
+        self.autorespond = config.getboolean(
+            'Options', 'Autorespond', fallback=ConfigDefaults.autorespond)
 
         self.moderator = config.get(
             'Permissions', 'Moderator', fallback=ConfigDefaults.moderator)

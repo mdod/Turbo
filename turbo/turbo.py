@@ -204,7 +204,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 return
 
         if message.author != self.user:
-            if not message.channel.is_private:
+            if not message.channel.is_private and self.config.autorespond:
                 await self._handle_autoresponses(message)
             # Don't do anything else if the message wasn't sent by the user
             if not self.user.bot:
