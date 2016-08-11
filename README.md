@@ -53,6 +53,7 @@ To add autoresponses, use `responses.json`. Add the channel ID to send the messa
 To add tags, use `tags.json`. An example tag is already in the file when you downloaded the bot, which should make it easy for you to tell how to create more.
 
 # Commands
+* `$tag <name>` - Triggers a tag
 * `$eval <code>` - Allows you to evaluate Python code
 * `$discrim <discrim>` - Displays all visible users with discriminator given
 * `$emoji <emoji as string>` - Displays information about a custom emoji
@@ -72,7 +73,7 @@ You can fork this project and change things to make it your own, using the found
 These methods exist to compliment various built-in discord.py methods:
 * `safe_send_message(msg, content, delete_after)` - Allows safe sending of a message. Checks for various exceptions. Can allow for deleting messages after a certain time.
 * `safe_edit_message(msg, content, delete_after)` - Allows safe editing of a message. Checks for various exceptions. Can allow for deleting messages after a certain time.
-* `safe_delete_message(msg)` - Allows safe deleting of a message. Checks for various exceptions;.
+* `safe_delete_message(msg)` - Allows safe deleting of a message. Checks for various exceptions.
 
 These methods are utility functions:
 * `_check_bot(msg, str)` - Checks if the bot is running on a bot account or user account. If user account, assume selfbot and edit the message. If oauth, assume standalone and send a message to the channel instead.
