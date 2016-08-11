@@ -18,6 +18,7 @@ from functools import wraps
 from discord.ext.commands.bot import _get_variable
 
 from .exceptions import FatalError, printError
+from .utils import load_file
 from .config import Config
 
 
@@ -29,6 +30,8 @@ class Turbo(discord.Client):
         self._reload()
 
         self.max_messages = self.config.messages
+        self.blacklist = set(load_file('config/blacklist.txt'))
+        self.disabled = False
 
     def no_private(func):
         """
@@ -154,13 +157,51 @@ class Turbo(discord.Client):
             print(Fore.YELLOW + """Warning: Detected you are running this bot on an oAuth account
 While not intended, it is possible for this bot to run on these accounts.
 Some commands may work weird, and additionally, they can be triggered by everyone""" + Fore.RESET)
-        print('Logged in as {}\n'.format(self.user))
+        print('Logged in as {}'.format(self.user))
+        if self.config.moderator:
+            mods = []
+            for u in self.config.moderator:
+                user = discord.utils.get(self.get_all_members(), id=u)
+                if user:
+                    name = "{}#{}".format(user.name, user.discriminator)
+                    mods.append(name)
+                else:
+                    mods.append(id)
+            mods = ', '.join(mods)
+            print('{}Moderators: {}{}'.format(Fore.YELLOW, mods, Fore.RESET))
+        if self.blacklist:
+            blacklist = []
+            for u in self.blacklist:
+                user = discord.utils.get(self.get_all_members(), id=u)
+                if user:
+                    name = "{}#{}".format(user.name, user.discriminator)
+                    blacklist.append(name)
+                else:
+                    blacklist.append(id)
+            blacklist = ', '.join(blacklist)
+            print('{}Blacklisted: {}{}'.format(Fore.YELLOW, blacklist, Fore.RESET))
+        print()
 
     async def on_message(self, message):
         """
         Called when any message is sent that the client can see
         """
         await self.wait_until_ready()  # Ensure that the client is ready
+
+        if self.disabled:
+            if message.author == self.user and message.content == "{}enable".format(self.config.prefix):
+                # Don't do anything if the bot is disabled
+                await self.cmd_enable(message)
+            return
+
+        if message.author.id in self.blacklist:
+            # Don't do anything if the user is blacklisted
+            return
+
+        if message.content == "{}disable".format(self.config.prefix):
+            if message.author == self.user or message.author.id in self.config.moderator:
+                await self.cmd_disable(message)
+                return
 
         if message.author != self.user:
             if not message.channel.is_private:
@@ -244,7 +285,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             traceback.print_exc()
 
     async def _check_bot(self, msgobj, str_to_send, delete_after=0):
-        if not self.user.bot:
+        if not self.user.bot and msgobj.author == self.user:
             return await self.safe_edit_message(msgobj, str_to_send, delete_after)
         else:
             return await self.safe_send_message(msgobj.channel, str_to_send, delete_after)
@@ -471,3 +512,19 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         if not edit:
             return await self._check_bot(message, ":warning: Problem changing server name to **{}**".format(name), delete_after=30)
         return await self._check_bot(message, ":white_check_mark: Changed server name to **{}**".format(name))
+
+    async def cmd_disable(self, message):
+        """
+        Disables the bot temporarily
+        """
+        self.disabled = True
+        print(Fore.YELLOW + "{} disabled the bot".format(message.author))
+        return await self._check_bot(message, ":white_check_mark:", delete_after=5)
+
+    async def cmd_enable(self, message):
+        """
+        Re-enables the bot (when disabled)
+        """
+        self.disabled = False
+        print(Fore.YELLOW + "{} enabled the bot".format(message.author))
+        return await self._check_bot(message, ":white_check_mark:", delete_after=5)

@@ -24,6 +24,9 @@ class Config:
         self.flip = config.get(
             'Options', 'Flip', fallback=ConfigDefaults.flip)
 
+        self.moderator = config.get(
+            'Permissions', 'Moderator', fallback=ConfigDefaults.moderator)
+
         self.validate()
 
     def validate(self):
@@ -34,12 +37,19 @@ class Config:
             print("{}Messages amount in config must be 100 or higher. Defaulting to {}{}".format(Fore.YELLOW, ConfigDefaults.messages, Fore.RESET))
             self.messages = ConfigDefaults.messages
 
-        flipmsgs = []
-        for msg in self.flip.split(','):
+        self.flip = self.handle_comma_list(self.flip)
+        self.moderator = self.handle_comma_list(self.moderator)
+
+    def handle_comma_list(self, data):
+        """
+        Utility function for handling comma seperated lists
+        """
+        newlist = []
+        for l in data.split(','):
             # Remove dodgy whitespace at the beginning of strings
-            msg = msg.lstrip()
-            flipmsgs.append(msg)
-        self.flip = flipmsgs
+            l = l.lstrip()
+            newlist.append(l)
+        return newlist
 
 
 class ConfigDefaults:
@@ -49,3 +59,5 @@ class ConfigDefaults:
     prefix = '$'
     messages = 5000
     flip = "Heads, Tails"
+
+    moderator = []
