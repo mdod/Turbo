@@ -12,6 +12,7 @@ import inspect
 import datetime
 import json
 import os
+import random
 from colorama import Fore
 from functools import wraps
 from discord.ext.commands.bot import _get_variable
@@ -26,6 +27,8 @@ class Turbo(discord.Client):
         super().__init__()
         self.config = Config()
         self._reload()
+
+        self.max_messages = self.config.messages
 
     def no_private(func):
         """
@@ -83,6 +86,7 @@ class Turbo(discord.Client):
             msg = await self.edit_message(message, content)
             if msg and delete_after:
                 asyncio.ensure_future(self._delete_msg(msg, delete_after))
+            return msg
         except discord.HTTPException:
             printError("Failed editing message: {}".format(message.id))
 
@@ -106,6 +110,7 @@ class Turbo(discord.Client):
             msg = await self.send_message(dest, content)
             if msg and delete_after:
                 asyncio.ensure_future(self._delete_msg(msg, delete_after))
+            return msg
         except discord.HTTPException:
             printError("Failed sending message to: {}".format(dest.name))
         except discord.Forbidden:
@@ -226,9 +231,9 @@ Some commands may work weird, and additionally, they can be triggered by everyon
 
     async def _check_bot(self, msgobj, str_to_send, delete_after=0):
         if not self.user.bot:
-            await self.safe_edit_message(msgobj, str_to_send, delete_after)
+            return await self.safe_edit_message(msgobj, str_to_send, delete_after)
         else:
-            await self.safe_send_message(msgobj.channel, str_to_send, delete_after)
+            return await self.safe_send_message(msgobj.channel, str_to_send, delete_after)
 
     async def cmd_eval(self, message, args, leftover_args):
         """
@@ -347,3 +352,33 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         """
         self._reload()
         await self._check_bot(message, ":package: Reloaded", delete_after=5)
+
+    async def cmd_echo(self, message, id):
+        """
+        Tries to obtain a message via ID and send it
+        This will fail if the client receives a lot of messages
+        By default, discord.py stores 5000 messages
+        """
+        msg = discord.utils.get(self.messages, id=id)
+        if not msg:
+            return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
+        response = ":information_source: Posted by **{}** in <#{}> at `{}`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, msg.timestamp, msg.content)
+        await self._check_bot(message, response)
+
+    async def cmd_flip(self, message):
+        """
+        Flips an imaginary object
+        """
+        await self._check_bot(message, ":trophy: **{}** wins!".format(random.choice(self.config.flip)))
+
+    async def cmd_random(self, message, number):
+        """
+        Returns a random number between 1 and the number given
+        """
+        try:
+            number = int(number)
+        except ValueError:
+            await self._check_bot(message, ":warning: **{}** could not be converted to a number".format(number), delete_after=30)
+
+        rand = range(number)
+        await self._check_bot(message, ":trophy: Number generated: **{}**".format(int(random.choice(rand) + 1)))
