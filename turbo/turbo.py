@@ -688,15 +688,28 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 h['name'], h['date'], holiday_type)
         return await self._check_bot(message, response)
 
-    """async def cmd_responses(self, message):
+    async def cmd_responses(self, message):
+        """
+        Returns a list of all autoresponses that have been set up
+        """
         if not self.config.autorespond:
             return await self._check_bot(message, ":warning: Autoresponses have been disabled in the config", delete_after=30)
         if not self.responses:
             return await self._check_bot(message, ":warning: No autoresponses have been setup", delete_after=30)
         response = ":information_source: List of **autoresponses**"
-        for c in self.responses:
-            print(c)
-            responses = []
-            for r in c:
-                print(r)
-                responses.append(r)"""
+        for c in self.responses.keys():
+            channel = discord.utils.get(self.get_all_channels(), id=c)
+            if not channel:
+                channel = c
+            else:
+                channel = '<#{}> on {}'.format(channel.id, channel.server)
+            response += "\n{}: ".format(channel)
+            if not self.responses[c].keys():
+                response += "None"
+            else:
+                channel_list = []
+                for r in self.responses[c].keys():
+                    channel_list.append(r)
+                channel_list = '`, `'.join(channel_list)
+                response += "`{}`".format(channel_list)
+        return await self._check_bot(message, response)
