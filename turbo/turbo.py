@@ -63,7 +63,6 @@ class Turbo(discord.Client):
         if save:
             self.save_json('config/responses.json', self.responses)
             self.save_json('config/tags.json', self.tags)
-            return
         self.responses = self.load_json('config/responses.json')
         self.tags = self.load_json('config/tags.json')
 
@@ -730,3 +729,16 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             tags = '`, `'.join(tags)
             response += "\n`{}`".format(tags)
         return await self._check_bot(message, response)
+
+    async def cmd_addtag(self, message, name, leftover_args):
+        """
+        Adds a tag with specified name and content
+        """
+        if not leftover_args:
+            return await self._check_bot(message, ":warning: You must specify content for your tag **{}**".format(name))
+        content = ' '.join([*leftover_args])
+        if name in self.tags.keys():
+            return await self._check_bot(message, ":warning: A tag with the name **{}** already exists".format(name), delete_after=30)
+        self.tags[name] = content
+        self._reload(save=True)
+        return await self._check_bot(message, ":white_check_mark: Added tag **{}**".format(name))
