@@ -742,3 +742,16 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         self.tags[name] = content
         self._reload(save=True)
         return await self._check_bot(message, ":white_check_mark: Added tag **{}**".format(name))
+
+    async def cmd_githubuser(self, message, name):
+        """
+        Get information about a GitHub user
+        """
+        try:
+            data = self._get_json_from_url('https://api.github.com/users/{}'.format(name))
+        except urllib.error.HTTPError as e:
+            return await self._check_bot(message, ":warning: Problem getting GitHub info for **{}**: `{}`".format(name, e))
+        response = "```py\nUsername: {}\nName: {}\nWebsite: {}\nLocation: {}\nPublic repos: {}\nPublic gists: {}\nFollowers: {}\nFollowing: {}".format(
+            data['login'], data['name'], data['blog'], data['location'], data['public_repos'], data['public_gists'], data['followers'], data['following'])
+        response += "\n```\n{}".format(data['html_url'])
+        return await self._check_bot(message, response)
