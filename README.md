@@ -63,6 +63,8 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :pencil2: `$tag <name>` - Triggers a tag
 * :pencil2: `$removetag <name>` - Removes a tag with given name
 * :pencil2: `$cleartags` - Removes all tags
+* :pencil2: `$tags` - Lists all tags
+* :pencil2: `$responses` - Lists all autoresponses
 * :floppy_disk: `$eval <code>` - Allows you to evaluate Python code
 * :hammer: `$discrim <discrim>` - Displays all visible users with discriminator given
 * :couple: `$emoji <emoji as string>` - Displays information about a custom emoji

@@ -713,3 +713,20 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 channel_list = '`, `'.join(channel_list)
                 response += "`{}`".format(channel_list)
         return await self._check_bot(message, response)
+
+    async def cmd_tags(self, message):
+        """
+        Returns a list of all tags that have been set up
+        """
+        if not self.tags:
+            return await self._check_bot(message, ":warning: No tags have been setup", delete_after=30)
+        response = ":information_source: List of **tags**"
+        if not self.tags.keys():
+            response += "\nNone"
+        else:
+            tags = []
+            for i in self.tags.keys():
+                tags.append(i)
+            tags = '`, `'.join(tags)
+            response += "\n`{}`".format(tags)
+        return await self._check_bot(message, response)
