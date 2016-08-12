@@ -1,4 +1,5 @@
 __pycache__/
-*.ini
-*.json
+config/config.ini
+config/responses.json
+config/tags.json
 config/blacklist.txt
