@@ -1,5 +1,2 @@
-config/config.ini
-config/blacklist.txt
-config/responses.json
-config/tags.json
 __pycache__/
+config/*
