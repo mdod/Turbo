@@ -1,16 +1,33 @@
 import configparser
+import os
+import shutil
 
-from .exceptions import FatalError
+from .exceptions import FatalError, printError
 from colorama import Fore
 
 
 class Config:
 
     def __init__(self):
+        restart_required = False
+        files = ['blacklist.txt', 'config.ini', 'responses.json', 'tags.json']
+        for f in files:
+            if not os.path.isfile('config/{}'.format(f)):
+                print("{}Can't find file: config/{}".format(Fore.YELLOW, f))
+                source = 'config/examples/{}'.format(f)
+                if os.path.isfile(source):
+                    shutil.copy(source, 'config/{}'.format(f))
+                    print("{}Copied file: {} to config/{}{}".format(Fore.GREEN, source, f, Fore.RESET))
+                else:
+                    raise FatalError("Example file: {} doesn't exist. Can't copy. Please redownload.".format(
+                        source))
+                restart_required = True
+        if restart_required:
+            print("\n{}Please configure the options in the /config folder and run the bot again.{}".format(Fore.YELLOW, Fore.RESET))
+            os._exit(1)
+
+
         config = configparser.ConfigParser(interpolation=None)
-        if not config.read('config/config.ini', encoding='utf-8'):
-            raise FatalError(
-                "The configuration file does not exist: {}".format('config/config.ini'))
         config.read('config/config.ini', encoding='utf-8')
 
         self.token = config.get('Auth', 'Token', fallback=ConfigDefaults.token)
