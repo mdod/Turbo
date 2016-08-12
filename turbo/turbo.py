@@ -13,11 +13,13 @@ import datetime
 import json
 import os
 import random
+import urllib.request
 from colorama import Fore
 from functools import wraps
 from discord.ext.commands.bot import _get_variable
 
 from .exceptions import FatalError, printError
+from .utils import load_file
 from .config import Config
 
 
@@ -29,6 +31,14 @@ class Turbo(discord.Client):
         self._reload()
 
         self.max_messages = self.config.messages
+        self.blacklist = set(load_file('config/blacklist.txt'))
+        self.disabled = False
+
+        self.timers = []
+        self.timer_failure = ":warning: Provide time in a format such as **01:00** for one minute"
+
+        self.holidays_countries = ['BE', 'BG', 'BR', 'CA', 'CZ', 'DE', 'ES', 'FR', 'GB',
+                                   'GT', 'HR', 'HU', 'ID', 'IN', 'IT', 'NL', 'NO', 'PL', 'PR', 'SI', 'SK', 'US']
 
     def no_private(func):
         """
@@ -154,7 +164,31 @@ class Turbo(discord.Client):
             print(Fore.YELLOW + """Warning: Detected you are running this bot on an oAuth account
 While not intended, it is possible for this bot to run on these accounts.
 Some commands may work weird, and additionally, they can be triggered by everyone""" + Fore.RESET)
-        print('Logged in as {}\n'.format(self.user))
+        print('Logged in as {}'.format(self.user))
+        if self.config.moderator:
+            mods = []
+            for u in self.config.moderator:
+                user = discord.utils.get(self.get_all_members(), id=u)
+                if user:
+                    name = "{}#{}".format(user.name, user.discriminator)
+                    mods.append(name)
+                else:
+                    mods.append(id)
+            mods = ', '.join(mods)
+            print('{}Moderators: {}{}'.format(Fore.YELLOW, mods, Fore.RESET))
+        if self.blacklist:
+            blacklist = []
+            for u in self.blacklist:
+                user = discord.utils.get(self.get_all_members(), id=u)
+                if user:
+                    name = "{}#{}".format(user.name, user.discriminator)
+                    blacklist.append(name)
+                else:
+                    blacklist.append(id)
+            blacklist = ', '.join(blacklist)
+            print('{}Blacklisted: {}{}'.format(
+                Fore.YELLOW, blacklist, Fore.RESET))
+        print()
 
     async def on_message(self, message):
         """
@@ -162,8 +196,23 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         """
         await self.wait_until_ready()  # Ensure that the client is ready
 
+        if self.disabled:
+            if message.author == self.user and message.content == "{}enable".format(self.config.prefix):
+                # Don't do anything if the bot is disabled
+                await self.cmd_enable(message)
+            return
+
+        if message.author.id in self.blacklist:
+            # Don't do anything if the user is blacklisted
+            return
+
+        if message.content == "{}disable".format(self.config.prefix):
+            if message.author == self.user or message.author.id in self.config.moderator:
+                await self.cmd_disable(message)
+                return
+
         if message.author != self.user:
-            if not message.channel.is_private:
+            if not message.channel.is_private and self.config.autorespond:
                 await self._handle_autoresponses(message)
             # Don't do anything else if the message wasn't sent by the user
             if not self.user.bot:
@@ -244,7 +293,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             traceback.print_exc()
 
     async def _check_bot(self, msgobj, str_to_send, delete_after=0):
-        if not self.user.bot:
+        if not self.user.bot and msgobj.author == self.user:
             return await self.safe_edit_message(msgobj, str_to_send, delete_after)
         else:
             return await self.safe_send_message(msgobj.channel, str_to_send, delete_after)
@@ -385,7 +434,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         msg = discord.utils.get(self.messages, id=id)
         if not msg:
             return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
-        response = ":information_source: Posted by **{}** in <#{}> at `{}`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, msg.timestamp, msg.content)
+        response = ":information_source: Posted by **{}** in <#{}> at `{}`\n――――――――――――――――――――――――\n{}".format(
+            msg.author, msg.channel.id, msg.timestamp, msg.content)
         return await self._check_bot(message, response)
 
     async def cmd_flip(self, message):
@@ -436,7 +486,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             printError("No permission to edit: {}".format(server))
             return False
         except discord.NotFound:
-            printError("Server wasn't found while trying to edit it: {}".format(server))
+            printError(
+                "Server wasn't found while trying to edit it: {}".format(server))
             return False
         except discord.HTTPException:
             printError("Editing the server failed: {}".format(server))
@@ -471,3 +522,121 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         if not edit:
             return await self._check_bot(message, ":warning: Problem changing server name to **{}**".format(name), delete_after=30)
         return await self._check_bot(message, ":white_check_mark: Changed server name to **{}**".format(name))
+
+    async def cmd_disable(self, message):
+        """
+        Disables the bot temporarily
+        """
+        self.disabled = True
+        print(Fore.YELLOW + "{} disabled the bot".format(message.author))
+        return await self._check_bot(message, ":white_check_mark:", delete_after=5)
+
+    async def cmd_enable(self, message):
+        """
+        Re-enables the bot (when disabled)
+        """
+        self.disabled = False
+        print(Fore.YELLOW + "{} enabled the bot".format(message.author))
+        return await self._check_bot(message, ":white_check_mark:", delete_after=5)
+
+    async def _handle_timer(self, timer_dict):
+        """
+        Handler for the timer command
+        """
+        await asyncio.sleep(int(timer_dict['totalseconds']))
+        if timer_dict['author'] != self.user:
+            await self.safe_send_message(timer_dict['channel'], ":stopwatch: {}, your `{}:{}` timer finished".format(timer_dict['author'].mention, timer_dict['minutes'], timer_dict['seconds']))
+        else:
+            await self.safe_send_message(timer_dict['channel'], ":stopwatch: `{}:{}` timer finished".format(timer_dict['minutes'], timer_dict['seconds']))
+        self.timers.remove(timer_dict)
+
+    async def cmd_timer(self, message, time):
+        """
+        Sets a timer, which will send another message in the channel when complete
+        """
+        if ":" not in time:
+            return await self._check_bot(message, self.timer_failure, delete_after=30)
+        minutes = time.rpartition(':')[0]
+        seconds = time.split(":", 1)[1]
+        if ":" in minutes or ":" in seconds:
+            return await self._check_bot(message, self.timer_failure, delete_after=30)
+        try:
+            minutes = int(minutes)
+            seconds = int(seconds)
+        except ValueError:
+            return await self._check_bot(message, self.timer_failure, delete_after=30)
+
+        time_to_wait = datetime.timedelta(minutes=minutes, seconds=seconds)
+        totalseconds = time_to_wait.total_seconds()
+        timer_dict = {'author': message.author, 'channel': message.channel, 'server': message.server,
+                      'timestamp': message.timestamp, 'minutes': minutes, 'seconds': seconds, 'totalseconds': totalseconds}
+        self.timers.append(timer_dict)
+        asyncio.ensure_future(self._handle_timer(timer_dict))
+        return await self._check_bot(message, ":white_check_mark: Timer set for **{}** minutes, **{}** seconds".format(minutes, seconds))
+
+    async def cmd_listtimers(self, message):
+        """
+        Provides a list of all active timers
+        """
+        response = ":stopwatch: All **running** timers\n```"
+        if self.timers:
+            for t in self.timers:
+                response += "\n{} - {}:{} - {}/{} - {}".format(
+                    t['author'], t['minutes'], t['seconds'], t['server'], t['channel'], t['timestamp'])
+        else:
+            response += "\nNone"
+        response += "\n```"
+        return await self._check_bot(message, response)
+
+    def _get_json_from_url(self, url):
+        """
+        Utility function for getting JSON from a URL
+        """
+        response = urllib.request.urlopen(url).read()
+        data = json.loads(response.decode('utf-8'))
+        return data
+
+    async def cmd_cat(self, message):
+        """
+        Pastes the link to a random cat picture
+        """
+        data = self._get_json_from_url('http://random.cat/meow')
+        url = data['file']
+        return await self._check_bot(message, url)
+
+    def _get_config_attr(self, attribute):
+        attr = getattr(self.config, attribute, None)
+        return attr
+
+    async def cmd_holidays(self, message, leftover_args):
+        """
+        Returns information about upcoming holidays
+        """
+        if not self._get_config_attr('holidays_key'):
+            return await self._check_bot(message, ":warning: You must specify an API key in the config", delete_after=30)
+
+        now = datetime.datetime.now()
+        if leftover_args:
+            country = ' '.join([*leftover_args])
+            country = country.upper()
+            if country not in self.holidays_countries:
+                valid = '`, `'.join(self.holidays_countries)
+                return await self._check_bot(message, ":warning: Invalid country. Valid countries are: `{}`".format(valid), delete_after=30)
+        else:
+            country = self.config.holidays_country
+        data = self._get_json_from_url('https://holidayapi.com/v1/holidays?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
+            country, now.year, now.month, now.day, self.config.holidays_key))
+        if data['status'] != 200:
+            printError(
+                "Couldn't get holiday info, returned {}".format(data['status']))
+            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(data['status']), delete_after=30)
+        response = "Upcoming holidays for **{}**\n".format(
+            country)
+        for h in data['holidays']:
+            if h['public']:
+                holiday_type = 'Public holiday'
+            else:
+                holiday_type = 'Holiday'
+            response += ":island: **{}** - {} - *{}*".format(
+                h['name'], h['date'], holiday_type)
+        return await self._check_bot(message, response)
