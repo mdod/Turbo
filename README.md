@@ -35,6 +35,7 @@ Other options:
 * `Prefix` - The prefix used before all of the bot's commands
 * `Messages` - The amount of messages for the client to cache (for use in `$echo`)
 * `Flip` - Comma seperated list of possible responses to the `$flip` command
+* `Color` - A color for Colorama to use for logging
 * `Autorespond` - Boolean for if the bot's autoresponding feature is enabled or not
 * `Moderator` - Comma seperated list of user IDs that can use the `$disable` command in emergencies
 * **For API-specific options**, see [apis.md](apis.md).
