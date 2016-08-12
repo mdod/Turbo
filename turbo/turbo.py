@@ -40,6 +40,8 @@ class Turbo(discord.Client):
         self.holidays_countries = ['BE', 'BG', 'BR', 'CA', 'CZ', 'DE', 'ES', 'FR', 'GB',
                                    'GT', 'HR', 'HU', 'ID', 'IN', 'IT', 'NL', 'NO', 'PL', 'PR', 'SI', 'SK', 'US']
 
+        self.name_genders = ['male', 'female']
+
         self.color = self.config.color
 
     def no_private(func):
@@ -645,6 +647,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
     async def cmd_cat(self, message):
         """
         Pastes the link to a random cat picture
+        Uses random.cat API
         """
         data = self._get_json_from_url('http://random.cat/meow')
         url = data['file']
@@ -657,6 +660,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
     async def cmd_holidays(self, message, leftover_args):
         """
         Returns information about upcoming holidays
+        Uses the HolidayApi
         """
         if not self._get_config_attr('holidays_key'):
             return await self._check_bot(message, ":warning: You must specify an API key in the config", delete_after=30)
@@ -746,6 +750,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
     async def cmd_githubuser(self, message, name):
         """
         Get information about a GitHub user
+        Uses the GitHub API v3
         """
         try:
             data = self._get_json_from_url('https://api.github.com/users/{}'.format(name))
@@ -754,4 +759,21 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         response = "```py\nUsername: {}\nName: {}\nWebsite: {}\nLocation: {}\nPublic repos: {}\nPublic gists: {}\nFollowers: {}\nFollowing: {}".format(
             data['login'], data['name'], data['blog'], data['location'], data['public_repos'], data['public_gists'], data['followers'], data['following'])
         response += "\n```\n{}".format(data['html_url'])
+        return await self._check_bot(message, response)
+
+    async def cmd_generatename(self, message, gender=None):
+        """
+        Generate a random name. Takes an optional gender.
+        Uses the UINames API
+        """
+        if gender:
+            gender = gender.lower()
+            if gender not in self.name_genders:
+                return await self._check_bot(message, ":warning: Invalid gender")
+        if gender:
+            data = self._get_json_from_url('http://uinames.com/api/?gender={}'.format(gender))
+        else:
+            data = self._get_json_from_url('http://uinames.com/api/')
+
+        response = "**{} {}** - Gender: `{}` - Region: `{}`".format(data['name'], data['surname'], data['gender'], data['region'])
         return await self._check_bot(message, response)
