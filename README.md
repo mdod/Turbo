@@ -87,6 +87,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :alarm_clock: `$listtimers` - Returns a list of all running timers
 * :cat: `$cat` - Sends a random cat picture
 * :city_sunrise: `$holidays [country code]` - Gets upcoming holiday info for country
+* :server_plug: `$githubuser <username>` - Gets information about a GitHub user
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.
