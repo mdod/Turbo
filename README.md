@@ -22,10 +22,9 @@ Clone the bot using **Git**:
 git clone https://github.com/jaydenkieran/TurboSelfbot.git -b master
 ```
 
-Run the bot using **Python**:
-```
-python run.py
-```
+Run the bot:
+* On **Windows**: Open `run.bat` (this will set console to UTF-8, fixing unicode encoding)
+* On **Linux**: Run `python run.py`
 
 # Usage
 In the configuration file (`config.ini`), change the `Token` to your account's token. As you **should** be using your own account, your token is obtainable via `localStorage.token` in the Web Inspector (CTRL + SHIFT + I) on the Discord client.
@@ -36,6 +35,9 @@ Other options:
 * `Prefix` - The prefix used before all of the bot's commands
 * `Messages` - The amount of messages for the client to cache (for use in `$echo`)
 * `Flip` - Comma seperated list of possible responses to the `$flip` command
+* `Autorespond` - Boolean for if the bot's autoresponding feature is enabled or not
+* `Moderator` - Comma seperated list of user IDs that can use the `$disable` command in emergencies
+* **For API-specific options**, see [apis.md](apis.md).
 
 There are two files in JSON format which allow for adding tags and autoresponses. Bare in mind: Autoresponses are bad practice in selfbots and should not be used in a public server, only private ones. Either of these files **can** be deleted and the bot will function fine without them, though the `$tag` command won't work if `tags.json` is deleted, and autoresponses will never be triggered if `responses.json` doesn't exist.
 
@@ -52,24 +54,32 @@ To add autoresponses, use `responses.json`. Add the channel ID to send the messa
 
 To add tags, use `tags.json`. An example tag is already in the file when you downloaded the bot, which should make it easy for you to tell how to create more.
 
+You can also blacklist user IDs from triggering autoresponses (or using the bot, if using it as a standalone one) by putting an ID on a new line in the `blacklist.txt` file.
+
 # Commands
-* `$tag <name>` - Triggers a tag
-* `$removetag <name>` - Removes a tag with given name
-* `$cleartags` - Removes all tags
-* `$eval <code>` - Allows you to evaluate Python code
-* `$discrim <discrim>` - Displays all visible users with discriminator given
-* `$emoji <emoji as string>` - Displays information about a custom emoji
-* `$snowflake <id>` - Get the creation time in UTC of a Discord ID
-* `$status <status>` - Change the user's status
-* `$strike <text>` - Strikes out text (replica of using `~~text~~`)
-* `$bold <text>` - Bolds text (replica of using `**text**`)
-* `$italics <text>` - Italicalises text (replica of using `*text*`)
-* `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
-* `$echo <id>` - Echos a message via it's ID (must be saved in cache)
-* `$flip` - Flips an imaginary object
-* `$random <number>` - Returns a random number between 1 and the number given
-* `$serverregion <region>` - Switch the server to a different region
-* `$servername <name>` - Rename the server
+* :pencil2: `$tag <name>` - Triggers a tag
+* :pencil2: `$removetag <name>` - Removes a tag with given name
+* :pencil2: `$cleartags` - Removes all tags
+* :floppy_disk: `$eval <code>` - Allows you to evaluate Python code
+* :hammer: `$discrim <discrim>` - Displays all visible users with discriminator given
+* :couple: `$emoji <emoji as string>` - Displays information about a custom emoji
+* :snowflake: `$snowflake <id>` - Get the creation time in UTC of a Discord ID
+* :speech_balloon: `$status <status>` - Change the user's status
+* :abc: `$strike <text>` - Strikes out text (replica of using `~~text~~`)
+* :abc: `$bold <text>` - Bolds text (replica of using `**text**`)
+* :abc: `$italics <text>` - Italicalises text (replica of using `*text*`)
+* :repeat: `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
+* :mega: `$echo <id>` - Echos a message via it's ID (must be saved in cache)
+* :arrow_right_hook: `$flip` - Flips an imaginary object
+* :1234: `$random <number>` - Returns a random number between 1 and the number given
+* :earth_americas: `$serverregion <region>` - Switch the server to a different region
+* :name_badge: `$servername <name>` - Rename the server
+* :no_entry_sign: `$disable` - Disables the bot temporarily
+* :white_check_mark: `$enable` - Re-enables the bot
+* :alarm_clock: `$timer <minutes:seconds>` - Starts a timer
+* :alarm_clock: `$listtimers` - Returns a list of all running timers
+* :cat: `$cat` - Sends a random cat picture
+* :city_sunrise: `$holidays [country code]` - Gets upcoming holiday info for country
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.
@@ -83,6 +93,7 @@ These methods exist to compliment various built-in discord.py methods:
 These methods are utility functions:
 * `_check_bot(msg, str)` - Checks if the bot is running on a bot account or user account. If user account, assume selfbot and edit the message. If oauth, assume standalone and send a message to the channel instead.
 * `_delete_msg(msg, time)` - Deletes a message after a period of time (in seconds)
+* `_get_json_from_url(url)` - Gets the JSON data at a URL, decodes it to UTF-8, and returns it
 
 The following decorators can be used:
 * `@no_private` - Disallows a command being used in a [PrivateChannel](http://discordpy.readthedocs.io/en/latest/api.html#discord.PrivateChannel)
@@ -92,3 +103,5 @@ These exceptions can be raised:
 
 # License
 This project is licensed under the **MIT License**. It is available in [LICENSE.md](LICENSE.md).
+
+For API-specific credits, see [apis.md](apis.md).

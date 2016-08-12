@@ -1,5 +1,5 @@
-# Configuration
-/config
+# Turbo Configuration
+config/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -59,3 +59,4 @@ docs/_build/
 
 # PyBuilder
 target/
+config/config.ini
