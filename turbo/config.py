@@ -44,8 +44,10 @@ class Config:
             print("{}Messages amount in config must be 100 or higher. Defaulting to {}{}".format(Fore.YELLOW, ConfigDefaults.messages, Fore.RESET))
             self.messages = ConfigDefaults.messages
 
-        self.flip = self.handle_comma_list(self.flip)
-        self.moderator = self.handle_comma_list(self.moderator)
+        if self.flip:
+            self.flip = self.handle_comma_list(self.flip)
+        if self.moderator:
+            self.moderator = self.handle_comma_list(self.moderator)
 
     def handle_comma_list(self, data):
         """
