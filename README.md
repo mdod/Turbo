@@ -61,6 +61,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 
 # Commands
 * :pencil2: `$tag <name>` - Triggers a tag
+* :pencil2: `$addtag <name> <content>` - Adds a new tag
 * :pencil2: `$removetag <name>` - Removes a tag with given name
 * :pencil2: `$cleartags` - Removes all tags
 * :pencil2: `$tags` - Lists all tags
