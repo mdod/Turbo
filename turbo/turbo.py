@@ -657,7 +657,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         attr = getattr(self.config, attribute, None)
         return attr
 
-    async def cmd_holidays(self, message, leftover_args):
+    async def cmd_holidays(self, message, country=None):
         """
         Returns information about upcoming holidays
         Uses the HolidayApi
@@ -666,8 +666,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             return await self._check_bot(message, ":warning: You must specify an API key in the config", delete_after=30)
 
         now = datetime.datetime.now()
-        if leftover_args:
-            country = ' '.join([*leftover_args])
+        if country:
             country = country.upper()
             if country not in self.holidays_countries:
                 valid = '`, `'.join(self.holidays_countries)
