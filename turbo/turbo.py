@@ -40,6 +40,8 @@ class Turbo(discord.Client):
         self.holidays_countries = ['BE', 'BG', 'BR', 'CA', 'CZ', 'DE', 'ES', 'FR', 'GB',
                                    'GT', 'HR', 'HU', 'ID', 'IN', 'IT', 'NL', 'NO', 'PL', 'PR', 'SI', 'SK', 'US']
 
+        self.color = self.config.color
+
     def no_private(func):
         """
         Decorator to disallow using a command in a PrivateChannel
@@ -153,7 +155,7 @@ class Turbo(discord.Client):
             for r in responses:
                 if r in message.content:
                     print("{0}{1.name} ({1.id}) {2}Response: {0}{3}".format(
-                        Fore.YELLOW, message.author, Fore.RESET, r))
+                        self.color, message.author, Fore.RESET, r))
                     await self.safe_send_message(message.channel, responses[r])
 
     async def on_ready(self):
@@ -161,7 +163,7 @@ class Turbo(discord.Client):
         Called when the bot is connected successfully
         """
         if self.user.bot:
-            print(Fore.YELLOW + """Warning: Detected you are running this bot on an oAuth account
+            print(self.color + """Warning: Detected you are running this bot on an oAuth account
 While not intended, it is possible for this bot to run on these accounts.
 Some commands may work weird, and additionally, they can be triggered by everyone""" + Fore.RESET)
         print('Logged in as {}'.format(self.user))
@@ -175,7 +177,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 else:
                     mods.append(id)
             mods = ', '.join(mods)
-            print('{}Moderators: {}{}'.format(Fore.YELLOW, mods, Fore.RESET))
+            print('{}Moderators: {}{}'.format(self.color, mods, Fore.RESET))
         if self.blacklist:
             blacklist = []
             for u in self.blacklist:
@@ -187,7 +189,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                     blacklist.append(id)
             blacklist = ', '.join(blacklist)
             print('{}Blacklisted: {}{}'.format(
-                Fore.YELLOW, blacklist, Fore.RESET))
+                self.color, blacklist, Fore.RESET))
         print()
 
     async def on_message(self, message):
@@ -231,7 +233,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             return  # If the command isn't actually a command, do nothing
 
         print("{0}{1.name} ({1.id}) {2}{3}".format(
-            Fore.YELLOW, message.author, Fore.RESET, content))
+            self.color, message.author, Fore.RESET, content))
 
         argspec = inspect.signature(handler)
         params = argspec.parameters.copy()
@@ -528,7 +530,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Disables the bot temporarily
         """
         self.disabled = True
-        print(Fore.YELLOW + "{} disabled the bot".format(message.author))
+        print(self.color + "{} disabled the bot".format(message.author))
         return await self._check_bot(message, ":white_check_mark:", delete_after=5)
 
     async def cmd_enable(self, message):
@@ -536,7 +538,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Re-enables the bot (when disabled)
         """
         self.disabled = False
-        print(Fore.YELLOW + "{} enabled the bot".format(message.author))
+        print(self.color + "{} enabled the bot".format(message.author))
         return await self._check_bot(message, ":white_check_mark:", delete_after=5)
 
     async def _handle_timer(self, timer_dict):

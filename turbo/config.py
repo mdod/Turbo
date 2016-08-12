@@ -25,6 +25,8 @@ class Config:
             'Options', 'Flip', fallback=ConfigDefaults.flip)
         self.autorespond = config.getboolean(
             'Options', 'Autorespond', fallback=ConfigDefaults.autorespond)
+        self.color = config.get(
+            'Options', 'Color', fallback=ConfigDefaults.color)
 
         self.moderator = config.get(
             'Permissions', 'Moderator', fallback=ConfigDefaults.moderator)
@@ -40,8 +42,15 @@ class Config:
         """
         Validates the configuration options
         """
+        self.color = self.color.upper()
+        if self.color not in ['BLACK', 'RED', 'GREEN', 'YELLOW', 'BLUE', 'MAGENTA', 'CYAN', 'WHITE']:
+            self.color = getattr(Fore, ConfigDefaults.color)
+            print("{}Specified color not found as a supported logging color. Defaulting to {}{}".format(self.color, ConfigDefaults.color, Fore.RESET))
+        else:
+            self.color = getattr(Fore, self.color)
+
         if self.messages < 100:
-            print("{}Messages amount in config must be 100 or higher. Defaulting to {}{}".format(Fore.YELLOW, ConfigDefaults.messages, Fore.RESET))
+            print("{}Messages amount in config must be 100 or higher. Defaulting to {}{}".format(self.color, ConfigDefaults.messages, Fore.RESET))
             self.messages = ConfigDefaults.messages
 
         self.flip = self.handle_comma_list(self.flip)
@@ -67,6 +76,7 @@ class ConfigDefaults:
     messages = 5000
     flip = "Heads, Tails"
     autorespond = False
+    color = "YELLOW"
 
     moderator = []
 
