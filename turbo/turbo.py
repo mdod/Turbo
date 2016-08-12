@@ -687,3 +687,16 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             response += ":island: **{}** - {} - *{}*".format(
                 h['name'], h['date'], holiday_type)
         return await self._check_bot(message, response)
+
+    """async def cmd_responses(self, message):
+        if not self.config.autorespond:
+            return await self._check_bot(message, ":warning: Autoresponses have been disabled in the config", delete_after=30)
+        if not self.responses:
+            return await self._check_bot(message, ":warning: No autoresponses have been setup", delete_after=30)
+        response = ":information_source: List of **autoresponses**"
+        for c in self.responses:
+            print(c)
+            responses = []
+            for r in c:
+                print(r)
+                responses.append(r)"""
