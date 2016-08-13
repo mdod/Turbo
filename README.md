@@ -76,7 +76,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :abc: `$italics <text>` - Italicalises text (replica of using `*text*`)
 * :repeat: `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
 * :mega: `$echo <id>` - Echos a message via it's ID (must be saved in cache)
-: :mega: `$messageinfo <id>` - Shows information about a message
+* :mega: `$messageinfo <id>` - Shows information about a message
 * :arrow_right_hook: `$flip` - Flips an imaginary object
 * :1234: `$random <number>` - Returns a random number between 1 and the number given
 * :earth_americas: `$serverregion <region>` - Switch the server to a different region
