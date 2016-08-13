@@ -106,10 +106,11 @@ These methods exist to compliment various built-in discord.py methods:
 These methods are utility functions:
 * `_check_bot(msg, str)` - Checks if the bot is running on a bot account or user account. If user account, assume selfbot and edit the message. If oauth, assume standalone and send a message to the channel instead.
 * `_delete_msg(msg, time)` - Deletes a message after a period of time (in seconds)
-* `_get_json_from_url(url)` - Gets the JSON data at a URL, decodes it to UTF-8, and returns it
+* `_request(url, **kwargs)` - Sends a HTTP request to a URL
 
 The following decorators can be used:
 * `@no_private` - Disallows a command being used in a [PrivateChannel](http://discordpy.readthedocs.io/en/latest/api.html#discord.PrivateChannel)
+* `@mashape` - Wrapper for commands that require the Mashape API key set in the config
 
 These exceptions can be raised:
 * `FatalError` - Raised when the bot encounters an error that means it cannot continue

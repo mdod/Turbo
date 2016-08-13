@@ -26,7 +26,8 @@ from .config import Config
 class Turbo(discord.Client):
 
     def __init__(self):
-        print("{}Turbo - Version {} - jaydenkieran.com/turbo{}".format(Fore.GREEN, VERSION, Fore.RESET))
+        print(
+            "{}Turbo - Version {} - jaydenkieran.com/turbo{}".format(Fore.GREEN, VERSION, Fore.RESET))
         super().__init__()
         self.config = Config()
         self._reload()
@@ -323,8 +324,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         """
         rawdiff = time1 - time2
         time = ""
-        secdiff = int(rawdiff.seconds%60)
-        mindiff = int(rawdiff.seconds/60%60)
+        secdiff = int(rawdiff.seconds % 60)
+        mindiff = int(rawdiff.seconds/60 % 60)
         hourdiff = int(rawdiff.seconds/60/60)
         if hourdiff > 0:
             if hourdiff == 1:
@@ -341,7 +342,6 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         else:
             time += "{} seconds".format(secdiff)
         return time
-
 
     async def cmd_eval(self, message, args, leftover_args):
         """
@@ -481,7 +481,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
         now = datetime.datetime.utcnow()
         time = self._time_since(now, msg.timestamp)
-        response = ":information_source: Posted by **{}** in <#{}> `{} ago`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, time, msg.content)
+        response = ":information_source: Posted by **{}** in <#{}> `{} ago`\n――――――――――――――――――――――――\n{}".format(
+            msg.author, msg.channel.id, time, msg.content)
         return await self._check_bot(message, response)
 
     async def cmd_msginfo(self, message, id):
@@ -789,7 +790,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             r = self._request(ApiBase.names)
         data = r.json()
 
-        response = "**{} {}** - Gender: `{}` - Region: `{}`".format(data['name'], data['surname'], data['gender'], data['region'])
+        response = "**{} {}** - Gender: `{}` - Region: `{}`".format(
+            data['name'], data['surname'], data['gender'], data['region'])
         return await self._check_bot(message, response)
 
     @mashape
@@ -798,15 +800,19 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Returns information about the current version of Hearthstone
         """
         message = await self._check_bot(message, ":black_joker: Getting information...")
-        r = self._request('{}/info'.format(ApiBase.hearthstone), headers=self.mashape_headers)
+        r = self._request(
+            '{}/info'.format(ApiBase.hearthstone), headers=self.mashape_headers)
         if r.status_code != 200:
             return await self._check_bot(message, ":warning: Invalid Mashape API key(?) - {}".format(r.status_code), delete_after=30)
         data = r.json()
-        response = ":black_joker: Hearthstone - **Information**\nCurrent patch: `{}`\n".format(data['patch'])
-        r = self._request('{}/cards'.format(ApiBase.hearthstone), headers=self.mashape_headers)
-        data = r.json()
+        response = ":black_joker: Information about Hearthstone\nCurrent patch: `{}`\n".format(
+            data['patch'])
+        r = self._request(
+            '{}/cards'.format(ApiBase.hearthstone), headers=self.mashape_headers)
+        data2 = r.json()
         cards = 0
-        for t in data:
-            cards += len(data[t])
-        response += "Cards in the game: `{}`".format(cards)
+        for t in data2:
+            cards += len(data2[t])
+        response += "Total cards: `{}`\nTotal classes: `{}`\nTotal sets: `{}`\nTotal types: `{}`\nTotal factions: `{}`\nTotal races: `{}`".format(
+            cards, len(data['classes']), len(data['sets']), len(data['types']), len(data['factions']), len(data['races']))
         return await self._check_bot(message, response)
