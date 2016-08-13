@@ -10,11 +10,14 @@ The following are Python dependencies, inside `requirements.txt`:
 
 * [discord.py](http://github.com/Rapptz/discord.py)
 * [colorama](https://pypi.python.org/pypi/colorama)
+* [requests](https://github.com/kennethreitz/requests)
 
 You can install them using:
 ```
 python -m pip install -r requirements.txt
 ```
+
+If you're on **Windows**, you can run `update_deps.bat` instead.
 
 # Installation
 Clone the bot using **Git**:
