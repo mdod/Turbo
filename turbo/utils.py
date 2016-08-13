@@ -1,6 +1,6 @@
 from .exceptions import printError
 
-VERSION = "2.0"
+VERSION = "2.0_nightly_130816"
 
 
 # Bork's nice method for loading files
