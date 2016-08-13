@@ -93,6 +93,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :electric_plug: `$githubuser <username>` - Gets information about a GitHub user
 * :performing_arts: `$generatename [gender]` - Generates a random name
 * :black_joker: `$hearthinfo` - Get information about the latest version of Hearthstone
+* :video_game: `$owplayer <battletag>` - Gets stats for an Overwatch player
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.

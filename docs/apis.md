@@ -16,6 +16,9 @@ Limited to 60 requests/hour for unauthenticated users. After that, you'll receiv
 ## UINames API
 > Data obtained from [UINames](http://uinames.com/).
 
+## Overwatch API
+> Data obtained from [OWApi](https://owapi.net/).
+
 ## Mashape
 These APIs are used through a service called [Mashape](https://market.mashape.com/). You should create an account there. Afterwards, replace `<name>` in this URL with your username and go to it:
 
