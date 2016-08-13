@@ -9,8 +9,8 @@ Turbo is a Discord selfbot powered by [discord.py](http://github.com/Rapptz/disc
 The following are Python dependencies, inside `requirements.txt`:
 
 * [discord.py](http://github.com/Rapptz/discord.py)
-* [Colorama](https://pypi.python.org/pypi/colorama)
-* [Requests](https://github.com/kennethreitz/requests)
+* [colorama](https://pypi.python.org/pypi/colorama)
+* [requests](https://github.com/kennethreitz/requests)
 
 You can install them using:
 ```
@@ -43,7 +43,7 @@ Other options:
 * `Color` - A color for Colorama to use for logging
 * `Autorespond` - Boolean for if the bot's autoresponding feature is enabled or not
 * `Moderator` - Comma seperated list of user IDs that can use the `$disable` command in emergencies
-* **For API-specific options**, see [apis.md](apis.md).
+* **For API-specific options**, see [apis.md](docs/apis.md).
 
 There are two files in JSON format which allow for adding tags and autoresponses. Bare in mind: Autoresponses are bad practice in selfbots and should not be used in a public server, only private ones. Either of these files **can** be deleted and the bot will function fine without them, though the `$tag` command won't work if `tags.json` is deleted, and autoresponses will never be triggered if `responses.json` doesn't exist.
 
@@ -116,4 +116,4 @@ These exceptions can be raised:
 # License
 This project is licensed under the **MIT License**. It is available in [LICENSE.md](LICENSE.md).
 
-For API-specific credits, see [apis.md](apis.md).
+For API-specific credits, see [apis.md](docs/apis.md).
