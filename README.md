@@ -92,7 +92,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :city_sunrise: `$holidays [country code]` - Gets upcoming holiday info for country
 * :electric_plug: `$githubuser <username>` - Gets information about a GitHub user
 * :performing_arts: `$generatename [gender]` - Generates a random name
-* :black_joker: `$hearthinfo` - Get information about the latest version of Hearthstone
+* :video_game: `$hearthinfo` - Get information about the latest version of Hearthstone
 * :video_game: `$owplayer <battletag>` - Gets stats for an Overwatch player
 
 # Development
@@ -111,7 +111,7 @@ These methods are utility functions:
 
 The following decorators can be used:
 * `@no_private` - Disallows a command being used in a [PrivateChannel](http://discordpy.readthedocs.io/en/latest/api.html#discord.PrivateChannel)
-* `@mashape` - Wrapper for commands that require the Mashape API key set in the config
+* `@mashape` - Wrapper for commands that require the [Mashape](https://market.mashape.com/) API key set in the config
 
 These exceptions can be raised:
 * `FatalError` - Raised when the bot encounters an error that means it cannot continue
