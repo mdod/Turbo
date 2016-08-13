@@ -27,3 +27,4 @@ class ApiBase:
     github = "https://api.github.com/"
     names = "http://uinames.com/api/"
     hearthstone = "https://omgvamp-hearthstone-v1.p.mashape.com/"
+    overwatch = "https://owapi.net/api/v2/u/"

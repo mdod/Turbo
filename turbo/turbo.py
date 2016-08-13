@@ -816,3 +816,28 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         response += "Total cards: `{}`\nTotal classes: `{}`\nTotal sets: `{}`\nTotal types: `{}`\nTotal factions: `{}`\nTotal races: `{}`".format(
             cards, len(data['classes']), len(data['sets']), len(data['types']), len(data['factions']), len(data['races']))
         return await self._check_bot(message, response)
+
+    async def cmd_owplayer(self, message, battletag):
+        """
+        Returns information about an Overwatch player
+        """
+        if '#' not in battletag:
+            return await self._check_bot(message, ":warning: That is not a valid battletag", delete_after=30)
+        battletag = battletag.replace('#', '-')
+        r = self._request(
+            '{}{}/stats/general'.format(ApiBase.overwatch, battletag))
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Error getting information - {}".format(r.status_code), delete_after=30)
+        data = r.json()
+        response = ":video_game: Overwatch Player: **{}**".format(battletag)
+        overall = data['overall_stats']
+        response += "\n```py\n"
+        response += "Level: {}\nWins: {}\nLosses: {}\nTotal games: {}\nPrestige: {}\nComp rank: {}".format(
+            overall['level'], overall['wins'], overall['losses'], overall['games'], overall['prestige'], overall['comprank'])
+        stats = data['game_stats']
+        response += "\nKPD: {}\nMulti-kills: {}\nFinal blows: {}".format(stats['kpd'], stats['multikills'], stats['final_blows'])
+        response += "\nMost solo kills in a game: {}\nMost healing done in a game: {}\nMost damage done in a game: {}".format(
+            stats['solo_kills_most_in_game'], stats['healing_done_most_in_game'], stats['damage_done_most_in_game'])
+        response += "\nHighest multi-kill: {}".format(stats['multikill_best'])
+        response += "\n```"
+        return await self._check_bot(message, response)
