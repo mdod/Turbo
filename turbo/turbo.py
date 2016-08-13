@@ -13,7 +13,7 @@ import datetime
 import json
 import os
 import random
-import urllib.request
+import requests
 from colorama import Fore
 from functools import wraps
 from discord.ext.commands.bot import _get_variable
@@ -637,20 +637,21 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         response += "\n```"
         return await self._check_bot(message, response)
 
-    def _get_json_from_url(self, url):
+    def _request(self, url, **kwargs):
         """
-        Utility function for getting JSON from a URL
+        Utility function for making a HTTP request to a website
+        and returning the response
         """
-        response = urllib.request.urlopen(url).read()
-        data = json.loads(response.decode('utf-8'))
-        return data
+        r = requests.get(url, **kwargs)
+        return r
 
     async def cmd_cat(self, message):
         """
         Pastes the link to a random cat picture
         Uses random.cat API
         """
-        data = self._get_json_from_url('http://random.cat/meow')
+        r = self._request('http://random.cat/meow')
+        data = r.json()
         url = data['file']
         return await self._check_bot(message, url)
 
@@ -674,12 +675,13 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 return await self._check_bot(message, ":warning: Invalid country. Valid countries are: `{}`".format(valid), delete_after=30)
         else:
             country = self.config.holidays_country
-        data = self._get_json_from_url('https://holidayapi.com/v1/holidays?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
+        r = self._request('https://holidayapi.com/v1/holidays?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
             country, now.year, now.month, now.day, self.config.holidays_key))
-        if data['status'] != 200:
+        if r.status_code != 200:
             printError(
-                "Couldn't get holiday info, returned {}".format(data['status']))
-            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(data['status']), delete_after=30)
+                "Couldn't get holiday info, returned {}".format(r.status_code))
+            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(r.status_code), delete_after=30)
+        data = r.json()
         response = "Upcoming holidays for **{}**\n".format(
             country)
         for h in data['holidays']:
@@ -752,10 +754,10 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Get information about a GitHub user
         Uses the GitHub API v3
         """
-        try:
-            data = self._get_json_from_url('https://api.github.com/users/{}'.format(name))
-        except urllib.error.HTTPError as e:
-            return await self._check_bot(message, ":warning: Problem getting GitHub info for **{}**: `{}`".format(name, e))
+        r = self._request('https://api.github.com/users/{}'.format(name))
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Problem getting GitHub info for **{}**: `{}`".format(name, r.status_code))
+        data = r.json()
         response = "```py\nUsername: {}\nName: {}\nWebsite: {}\nLocation: {}\nPublic repos: {}\nPublic gists: {}\nFollowers: {}\nFollowing: {}".format(
             data['login'], data['name'], data['blog'], data['location'], data['public_repos'], data['public_gists'], data['followers'], data['following'])
         response += "\n```\n{}".format(data['html_url'])
@@ -771,9 +773,10 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             if gender not in self.name_genders:
                 return await self._check_bot(message, ":warning: Invalid gender")
         if gender:
-            data = self._get_json_from_url('http://uinames.com/api/?gender={}'.format(gender))
+            r = self._request('http://uinames.com/api/?gender={}'.format(gender))
         else:
-            data = self._get_json_from_url('http://uinames.com/api/')
+            r = self._request('http://uinames.com/api/')
+        data = r.json()
 
         response = "**{} {}** - Gender: `{}` - Region: `{}`".format(data['name'], data['surname'], data['gender'], data['region'])
         return await self._check_bot(message, response)
