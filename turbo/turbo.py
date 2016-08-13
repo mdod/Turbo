@@ -13,19 +13,21 @@ import datetime
 import json
 import os
 import random
-import urllib.request
+import requests
 from colorama import Fore
 from functools import wraps
 from discord.ext.commands.bot import _get_variable
 
 from .exceptions import FatalError, printError
-from .utils import load_file
+from .utils import load_file, VERSION, ApiBase
 from .config import Config
 
 
 class Turbo(discord.Client):
 
     def __init__(self):
+        print(
+            "{}Turbo - Version {} - jaydenkieran.com/turbo{}".format(Fore.GREEN, VERSION, Fore.RESET))
         super().__init__()
         self.config = Config()
         self._reload()
@@ -40,7 +42,10 @@ class Turbo(discord.Client):
         self.holidays_countries = ['BE', 'BG', 'BR', 'CA', 'CZ', 'DE', 'ES', 'FR', 'GB',
                                    'GT', 'HR', 'HU', 'ID', 'IN', 'IT', 'NL', 'NO', 'PL', 'PR', 'SI', 'SK', 'US']
 
+        self.name_genders = ['male', 'female']
+
         self.color = self.config.color
+        self.mashape_headers = {'X-Mashape-Key': self.config.mashape}
 
     def no_private(func):
         """
@@ -54,6 +59,20 @@ class Turbo(discord.Client):
                 return await func(self, *args, **kwargs)
             else:
                 return False
+        return wrapper
+
+    def mashape(func):
+        """
+        Decorator for Mashape-based API calls
+        """
+        @wraps(func)
+        async def wrapper(self, *args, **kwargs):
+            msg = _get_variable('message')
+
+            if not msg or self.config.mashape:
+                return await func(self, *args, **kwargs)
+            else:
+                return await self._check_bot(msg, ':warning: You need to provide a Mashape API key in the config', delete_after=30)
         return wrapper
 
     def _reload(self, save=False):
@@ -305,8 +324,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         """
         rawdiff = time1 - time2
         time = ""
-        secdiff = int(rawdiff.seconds%60)
-        mindiff = int(rawdiff.seconds/60%60)
+        secdiff = int(rawdiff.seconds % 60)
+        mindiff = int(rawdiff.seconds/60 % 60)
         hourdiff = int(rawdiff.seconds/60/60)
         if hourdiff > 0:
             if hourdiff == 1:
@@ -323,7 +342,6 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         else:
             time += "{} seconds".format(secdiff)
         return time
-
 
     async def cmd_eval(self, message, args, leftover_args):
         """
@@ -463,7 +481,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             return await self._check_bot(message, ":warning: Can't find message: **{}**".format(id), delete_after=30)
         now = datetime.datetime.utcnow()
         time = self._time_since(now, msg.timestamp)
-        response = ":information_source: Posted by **{}** in <#{}> `{} ago`\n――――――――――――――――――――――――\n{}".format(msg.author, msg.channel.id, time, msg.content)
+        response = ":information_source: Posted by **{}** in <#{}> `{} ago`\n――――――――――――――――――――――――\n{}".format(
+            msg.author, msg.channel.id, time, msg.content)
         return await self._check_bot(message, response)
 
     async def cmd_msginfo(self, message, id):
@@ -634,48 +653,47 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         response += "\n```"
         return await self._check_bot(message, response)
 
-    def _get_json_from_url(self, url):
+    def _request(self, url, **kwargs):
         """
-        Utility function for getting JSON from a URL
+        Utility function for making a HTTP request to a website
+        and returning the response
         """
-        response = urllib.request.urlopen(url).read()
-        data = json.loads(response.decode('utf-8'))
-        return data
+        r = requests.get(url, **kwargs)
+        return r
 
     async def cmd_cat(self, message):
         """
         Pastes the link to a random cat picture
+        Uses random.cat API
         """
-        data = self._get_json_from_url('http://random.cat/meow')
+        r = self._request(ApiBase.cat)
+        data = r.json()
         url = data['file']
         return await self._check_bot(message, url)
 
-    def _get_config_attr(self, attribute):
-        attr = getattr(self.config, attribute, None)
-        return attr
-
-    async def cmd_holidays(self, message, leftover_args):
+    async def cmd_holidays(self, message, country=None):
         """
         Returns information about upcoming holidays
+        Uses the HolidayApi
         """
-        if not self._get_config_attr('holidays_key'):
-            return await self._check_bot(message, ":warning: You must specify an API key in the config", delete_after=30)
+        if not self.config.holidays_key:
+            return await self._check_bot(message, ":warning: You must specify a Holidays API key in the config", delete_after=30)
 
         now = datetime.datetime.now()
-        if leftover_args:
-            country = ' '.join([*leftover_args])
+        if country:
             country = country.upper()
             if country not in self.holidays_countries:
                 valid = '`, `'.join(self.holidays_countries)
                 return await self._check_bot(message, ":warning: Invalid country. Valid countries are: `{}`".format(valid), delete_after=30)
         else:
             country = self.config.holidays_country
-        data = self._get_json_from_url('https://holidayapi.com/v1/holidays?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
-            country, now.year, now.month, now.day, self.config.holidays_key))
-        if data['status'] != 200:
+        r = self._request('{}?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
+            ApiBase.holidays, country, now.year, now.month, now.day, self.config.holidays_key))
+        if r.status_code != 200:
             printError(
-                "Couldn't get holiday info, returned {}".format(data['status']))
-            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(data['status']), delete_after=30)
+                "Couldn't get holiday info, returned {}".format(r.status_code))
+            return await self._check_bot(message, ":warning: An error occurred while obtaining holidays: {}".format(r.status_code), delete_after=30)
+        data = r.json()
         response = "Upcoming holidays for **{}**\n".format(
             country)
         for h in data['holidays']:
@@ -742,3 +760,84 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         self.tags[name] = content
         self._reload(save=True)
         return await self._check_bot(message, ":white_check_mark: Added tag **{}**".format(name))
+
+    async def cmd_githubuser(self, message, name):
+        """
+        Get information about a GitHub user
+        Uses the GitHub API v3
+        """
+        r = self._request('{}users/{}'.format(ApiBase.github, name))
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Problem getting GitHub info for **{}**: `{}`".format(name, r.status_code))
+        data = r.json()
+        response = "```py\nUsername: {}\nName: {}\nWebsite: {}\nLocation: {}\nPublic repos: {}\nPublic gists: {}\nFollowers: {}\nFollowing: {}".format(
+            data['login'], data['name'], data['blog'], data['location'], data['public_repos'], data['public_gists'], data['followers'], data['following'])
+        response += "\n```\n{}".format(data['html_url'])
+        return await self._check_bot(message, response)
+
+    async def cmd_generatename(self, message, gender=None):
+        """
+        Generate a random name. Takes an optional gender.
+        Uses the UINames API
+        """
+        if gender:
+            gender = gender.lower()
+            if gender not in self.name_genders:
+                return await self._check_bot(message, ":warning: Invalid gender")
+        if gender:
+            r = self._request('{}?gender={}'.format(ApiBase.names, gender))
+        else:
+            r = self._request(ApiBase.names)
+        data = r.json()
+
+        response = "**{} {}** - Gender: `{}` - Region: `{}`".format(
+            data['name'], data['surname'], data['gender'], data['region'])
+        return await self._check_bot(message, response)
+
+    @mashape
+    async def cmd_hearthinfo(self, message, headers=None):
+        """
+        Returns information about the current version of Hearthstone
+        """
+        message = await self._check_bot(message, ":black_joker: Getting information...")
+        r = self._request(
+            '{}/info'.format(ApiBase.hearthstone), headers=self.mashape_headers)
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Invalid Mashape API key(?) - {}".format(r.status_code), delete_after=30)
+        data = r.json()
+        response = ":black_joker: Information about Hearthstone\nCurrent patch: `{}`\n".format(
+            data['patch'])
+        r = self._request(
+            '{}/cards'.format(ApiBase.hearthstone), headers=self.mashape_headers)
+        data2 = r.json()
+        cards = 0
+        for t in data2:
+            cards += len(data2[t])
+        response += "Total cards: `{}`\nTotal classes: `{}`\nTotal sets: `{}`\nTotal types: `{}`\nTotal factions: `{}`\nTotal races: `{}`".format(
+            cards, len(data['classes']), len(data['sets']), len(data['types']), len(data['factions']), len(data['races']))
+        return await self._check_bot(message, response)
+
+    async def cmd_owplayer(self, message, battletag):
+        """
+        Returns information about an Overwatch player
+        """
+        if '#' not in battletag:
+            return await self._check_bot(message, ":warning: That is not a valid battletag", delete_after=30)
+        battletag = battletag.replace('#', '-')
+        r = self._request(
+            '{}{}/stats/general'.format(ApiBase.overwatch, battletag))
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Error getting information - {}".format(r.status_code), delete_after=30)
+        data = r.json()
+        response = ":video_game: Overwatch Player: **{}**".format(battletag)
+        overall = data['overall_stats']
+        response += "\n```py\n"
+        response += "Level: {}\nWins: {}\nLosses: {}\nTotal games: {}\nPrestige: {}\nComp rank: {}".format(
+            overall['level'], overall['wins'], overall['losses'], overall['games'], overall['prestige'], overall['comprank'])
+        stats = data['game_stats']
+        response += "\nKPD: {}\nMulti-kills: {}\nFinal blows: {}".format(stats['kpd'], stats['multikills'], stats['final_blows'])
+        response += "\nMost solo kills in a game: {}\nMost healing done in a game: {}\nMost damage done in a game: {}".format(
+            stats['solo_kills_most_in_game'], stats['healing_done_most_in_game'], stats['damage_done_most_in_game'])
+        response += "\nHighest multi-kill: {}".format(stats['multikill_best'])
+        response += "\n```"
+        return await self._check_bot(message, response)

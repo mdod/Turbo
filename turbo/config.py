@@ -53,6 +53,9 @@ class Config:
         self.holidays_country = config.get(
             'Holidays', 'Country', fallback=ConfigDefaults.holidays_country)
 
+        self.mashape = config.get(
+            'Mashape', 'Key', fallback=ConfigDefaults.mashape)
+
         self.validate()
 
     def validate(self):
@@ -101,3 +104,5 @@ class ConfigDefaults:
 
     holidays_key = None
     holidays_country = "US"
+
+    mashape = None

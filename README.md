@@ -10,11 +10,14 @@ The following are Python dependencies, inside `requirements.txt`:
 
 * [discord.py](http://github.com/Rapptz/discord.py)
 * [colorama](https://pypi.python.org/pypi/colorama)
+* [requests](https://github.com/kennethreitz/requests)
 
 You can install them using:
 ```
 python -m pip install -r requirements.txt
 ```
+
+If you're on **Windows**, you can run `update_deps.bat` instead.
 
 # Installation
 Clone the bot using **Git**:
@@ -40,7 +43,7 @@ Other options:
 * `Color` - A color for Colorama to use for logging
 * `Autorespond` - Boolean for if the bot's autoresponding feature is enabled or not
 * `Moderator` - Comma seperated list of user IDs that can use the `$disable` command in emergencies
-* **For API-specific options**, see [apis.md](apis.md).
+* **For API-specific options**, see [apis.md](docs/apis.md).
 
 There are two files in JSON format which allow for adding tags and autoresponses. Bare in mind: Autoresponses are bad practice in selfbots and should not be used in a public server, only private ones. Either of these files **can** be deleted and the bot will function fine without them, though the `$tag` command won't work if `tags.json` is deleted, and autoresponses will never be triggered if `responses.json` doesn't exist.
 
@@ -61,6 +64,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 
 # Commands
 * :pencil2: `$tag <name>` - Triggers a tag
+* :pencil2: `$addtag <name> <content>` - Adds a new tag
 * :pencil2: `$removetag <name>` - Removes a tag with given name
 * :pencil2: `$cleartags` - Removes all tags
 * :pencil2: `$tags` - Lists all tags
@@ -75,7 +79,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :abc: `$italics <text>` - Italicalises text (replica of using `*text*`)
 * :repeat: `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
 * :mega: `$echo <id>` - Echos a message via it's ID (must be saved in cache)
-: :mega: `$messageinfo <id>` - Shows information about a message
+* :mega: `$messageinfo <id>` - Shows information about a message
 * :arrow_right_hook: `$flip` - Flips an imaginary object
 * :1234: `$random <number>` - Returns a random number between 1 and the number given
 * :earth_americas: `$serverregion <region>` - Switch the server to a different region
@@ -86,6 +90,10 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :alarm_clock: `$listtimers` - Returns a list of all running timers
 * :cat: `$cat` - Sends a random cat picture
 * :city_sunrise: `$holidays [country code]` - Gets upcoming holiday info for country
+* :electric_plug: `$githubuser <username>` - Gets information about a GitHub user
+* :performing_arts: `$generatename [gender]` - Generates a random name
+* :video_game: `$hearthinfo` - Get information about the latest version of Hearthstone
+* :video_game: `$owplayer <battletag>` - Gets stats for an Overwatch player
 
 # Development
 You can fork this project and change things to make it your own, using the foundations that it is built upon. You should read the [documentation](http://discordpy.readthedocs.io/en/latest/api.html#client) for discord.py to learn more about the methods that can be used.
@@ -99,10 +107,11 @@ These methods exist to compliment various built-in discord.py methods:
 These methods are utility functions:
 * `_check_bot(msg, str)` - Checks if the bot is running on a bot account or user account. If user account, assume selfbot and edit the message. If oauth, assume standalone and send a message to the channel instead.
 * `_delete_msg(msg, time)` - Deletes a message after a period of time (in seconds)
-* `_get_json_from_url(url)` - Gets the JSON data at a URL, decodes it to UTF-8, and returns it
+* `_request(url, **kwargs)` - Sends a HTTP request to a URL
 
 The following decorators can be used:
 * `@no_private` - Disallows a command being used in a [PrivateChannel](http://discordpy.readthedocs.io/en/latest/api.html#discord.PrivateChannel)
+* `@mashape` - Wrapper for commands that require the [Mashape](https://market.mashape.com/) API key set in the config
 
 These exceptions can be raised:
 * `FatalError` - Raised when the bot encounters an error that means it cannot continue
@@ -110,4 +119,4 @@ These exceptions can be raised:
 # License
 This project is licensed under the **MIT License**. It is available in [LICENSE.md](LICENSE.md).
 
-For API-specific credits, see [apis.md](apis.md).
+For API-specific credits, see [apis.md](docs/apis.md).

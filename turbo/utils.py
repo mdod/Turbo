@@ -1,5 +1,7 @@
 from .exceptions import printError
 
+VERSION = "2.0_nightly_130816"
+
 
 # Bork's nice method for loading files
 def load_file(filename, skip_commented_lines=True, comment_char='#'):
@@ -17,3 +19,12 @@ def load_file(filename, skip_commented_lines=True, comment_char='#'):
     except IOError as e:
         printError("Error loading {}: {}".format(filename, e))
         return []
+
+
+class ApiBase:
+    cat = "http://random.cat/meow"
+    holidays = "https://holidayapi.com/v1/holidays"
+    github = "https://api.github.com/"
+    names = "http://uinames.com/api/"
+    hearthstone = "https://omgvamp-hearthstone-v1.p.mashape.com/"
+    overwatch = "https://owapi.net/api/v2/u/"
