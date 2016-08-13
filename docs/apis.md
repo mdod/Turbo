@@ -15,3 +15,17 @@ Limited to 60 requests/hour for unauthenticated users. After that, you'll receiv
 
 ## UINames API
 > Data obtained from [UINames](http://uinames.com/).
+
+## Mashape
+These APIs are used through a service called [Mashape](https://market.mashape.com/). You should create an account there. Afterwards, replace `<name>` in this URL with your username and go to it:
+
+```
+https://market.mashape.com/<name>/applications/default-application
+```
+
+Afterwards, click **GET THE KEYS** at the top-right, select **Production** from the drop-down menu, and copy your key. This key is universal and will be used for every API under this section.
+
+Place it in `config.ini` under the **[Mashape]** section.
+
+### Hearthstone API
+> Data obtained from [Mashape](https://market.mashape.com/omgvamp/hearthstone).

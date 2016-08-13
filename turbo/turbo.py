@@ -19,7 +19,7 @@ from functools import wraps
 from discord.ext.commands.bot import _get_variable
 
 from .exceptions import FatalError, printError
-from .utils import load_file, VERSION
+from .utils import load_file, VERSION, ApiBase
 from .config import Config
 
 
@@ -44,6 +44,7 @@ class Turbo(discord.Client):
         self.name_genders = ['male', 'female']
 
         self.color = self.config.color
+        self.mashape_headers = {'X-Mashape-Key': self.config.mashape}
 
     def no_private(func):
         """
@@ -57,6 +58,20 @@ class Turbo(discord.Client):
                 return await func(self, *args, **kwargs)
             else:
                 return False
+        return wrapper
+
+    def mashape(func):
+        """
+        Decorator for Mashape-based API calls
+        """
+        @wraps(func)
+        async def wrapper(self, *args, **kwargs):
+            msg = _get_variable('message')
+
+            if not msg or self.config.mashape:
+                return await func(self, *args, **kwargs)
+            else:
+                return await self._check_bot(msg, ':warning: You need to provide a Mashape API key in the config', delete_after=30)
         return wrapper
 
     def _reload(self, save=False):
@@ -650,22 +665,18 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Pastes the link to a random cat picture
         Uses random.cat API
         """
-        r = self._request('http://random.cat/meow')
+        r = self._request(ApiBase.cat)
         data = r.json()
         url = data['file']
         return await self._check_bot(message, url)
-
-    def _get_config_attr(self, attribute):
-        attr = getattr(self.config, attribute, None)
-        return attr
 
     async def cmd_holidays(self, message, country=None):
         """
         Returns information about upcoming holidays
         Uses the HolidayApi
         """
-        if not self._get_config_attr('holidays_key'):
-            return await self._check_bot(message, ":warning: You must specify an API key in the config", delete_after=30)
+        if not self.config.holidays_key:
+            return await self._check_bot(message, ":warning: You must specify a Holidays API key in the config", delete_after=30)
 
         now = datetime.datetime.now()
         if country:
@@ -675,8 +686,8 @@ Some commands may work weird, and additionally, they can be triggered by everyon
                 return await self._check_bot(message, ":warning: Invalid country. Valid countries are: `{}`".format(valid), delete_after=30)
         else:
             country = self.config.holidays_country
-        r = self._request('https://holidayapi.com/v1/holidays?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
-            country, now.year, now.month, now.day, self.config.holidays_key))
+        r = self._request('{}?country={}&year={}&month={}&day={}&upcoming=True&key={}'.format(
+            ApiBase.holidays, country, now.year, now.month, now.day, self.config.holidays_key))
         if r.status_code != 200:
             printError(
                 "Couldn't get holiday info, returned {}".format(r.status_code))
@@ -754,7 +765,7 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         Get information about a GitHub user
         Uses the GitHub API v3
         """
-        r = self._request('https://api.github.com/users/{}'.format(name))
+        r = self._request('{}users/{}'.format(ApiBase.github, name))
         if r.status_code != 200:
             return await self._check_bot(message, ":warning: Problem getting GitHub info for **{}**: `{}`".format(name, r.status_code))
         data = r.json()
@@ -773,10 +784,29 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             if gender not in self.name_genders:
                 return await self._check_bot(message, ":warning: Invalid gender")
         if gender:
-            r = self._request('http://uinames.com/api/?gender={}'.format(gender))
+            r = self._request('{}?gender={}'.format(ApiBase.names, gender))
         else:
-            r = self._request('http://uinames.com/api/')
+            r = self._request(ApiBase.names)
         data = r.json()
 
         response = "**{} {}** - Gender: `{}` - Region: `{}`".format(data['name'], data['surname'], data['gender'], data['region'])
+        return await self._check_bot(message, response)
+
+    @mashape
+    async def cmd_hearthinfo(self, message, headers=None):
+        """
+        Returns information about the current version of Hearthstone
+        """
+        message = await self._check_bot(message, ":black_joker: Getting information...")
+        r = self._request('{}/info'.format(ApiBase.hearthstone), headers=self.mashape_headers)
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Invalid Mashape API key(?) - {}".format(r.status_code), delete_after=30)
+        data = r.json()
+        response = ":black_joker: Hearthstone - **Information**\nCurrent patch: `{}`\n".format(data['patch'])
+        r = self._request('{}/cards'.format(ApiBase.hearthstone), headers=self.mashape_headers)
+        data = r.json()
+        cards = 0
+        for t in data:
+            cards += len(data[t])
+        response += "Cards in the game: `{}`".format(cards)
         return await self._check_bot(message, response)
