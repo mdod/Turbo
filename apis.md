@@ -11,7 +11,7 @@ Options:
 ## GitHub API v3
 > Data obtained from [GitHub](https://github.com/).
 
-Limited to 60 requests/hour. After that, you'll receive `HTTP Error 403: Forbidden`
+Limited to 60 requests/hour for unauthenticated users. After that, you'll receive `HTTP Error 403: Forbidden`.
 
 ## UINames API
 > Data obtained from [UINames](http://uinames.com/).
