@@ -1,5 +1,7 @@
 from .exceptions import printError
 
+VERSION = "2.0"
+
 
 # Bork's nice method for loading files
 def load_file(filename, skip_commented_lines=True, comment_char='#'):

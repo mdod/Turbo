@@ -19,13 +19,14 @@ from functools import wraps
 from discord.ext.commands.bot import _get_variable
 
 from .exceptions import FatalError, printError
-from .utils import load_file
+from .utils import load_file, VERSION
 from .config import Config
 
 
 class Turbo(discord.Client):
 
     def __init__(self):
+        print("{}Turbo - Version {} - jaydenkieran.com/turbo{}".format(Fore.GREEN, VERSION, Fore.RESET))
         super().__init__()
         self.config = Config()
         self._reload()
