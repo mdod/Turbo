@@ -1,5 +1,5 @@
-# :rocket: Turbo - Discord selfbot
-> **Note:** This bot does work as a standalone bot too if you prefer, however it doesn't allow configuring permissions (e.g who can use commands). To use it standalone, create an oAuth application and set `bot=True` in `config.ini`.
+# :rocket: Turbo - Discord Bot
+> **Note:** Turbo works as a selfbot or a regular bot, however it doesn't allow configuring permissions (e.g who can use commands). To use it as a standalone bot, create an [oAuth application](https://discordapp.com/developers/applications/me) and set `bot=True` in `config.ini`.
 
 Turbo is a Discord bot powered by [discord.py](http://github.com/Rapptz/discord.py), which runs alongside your user account to help you perform many functions, including easily evaluating Python code, checking the servers that an emoji is on, getting all users with a certain discriminator, and much more!
 
