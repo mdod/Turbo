@@ -36,7 +36,7 @@ python -m pip install -r requirements.txt
         **More info about responses can be found a little further down**
 
     **[Optional]** In the `tags.json` file:
-    * Add tags (Responses sent by the bot each time a user sends a message like: **`$tag <tag name>`**)
+    * Add tags (Responses sent by the bot each time a user sends a message like: `$tag <tag name>`)
     
         Tags are set like this:
         ```
