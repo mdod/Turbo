@@ -13,7 +13,6 @@ The following are Python dependencies, inside `requirements.txt`:
 * [requests](https://github.com/kennethreitz/requests)
 * [steamapi](https://github.com/mdod/steamapi)
 * [easy_date](https://pypi.python.org/pypi/easy-date/0.1.3)
-* [date_converter](https://pypi.python.org/pypi/easy-date/0.1.4)
 
 You can install them using:
 ```
