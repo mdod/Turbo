@@ -56,6 +56,9 @@ class Config:
         self.mashape = config.get(
             'Mashape', 'Key', fallback=ConfigDefaults.mashape)
 
+        self.steam_key = config.get(
+            'Steam', 'Key')
+
         self.validate()
 
     def validate(self):

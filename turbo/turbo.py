@@ -14,10 +14,16 @@ import json
 import os
 import random
 import requests
+import selenium
+import easy_date
+import date_converter
+import steamapi
+import subprocess
 from colorama import Fore
 from functools import wraps
 from discord.ext.commands.bot import _get_variable
-
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from .exceptions import FatalError, printError
 from .utils import load_file, VERSION, ApiBase
 from .config import Config
@@ -670,6 +676,73 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         data = r.json()
         url = data['file']
         return await self._check_bot(message, url)
+
+    async def cmd_steamuser(self, message, steamid):
+        """
+        Get's steam user info
+        """
+        steamkeyequals = "&steamids="
+        r = self._request('{}{}{}{}'.format(ApiBase.steam, self.config.steam_key, steamkeyequals, steamid))
+        steamapi.core.APIConnection(api_key=self.config.steam_key)
+        user = steamapi.user.SteamUser(steamid)
+        data = r.json()
+        response = data['response']
+        players = response['players']
+        zero = players[0]
+        name = zero['personaname']
+        status = zero['personastate']
+        accountcreation = zero['timecreated']
+        lastlogoff = zero['lastlogoff']
+        recentlyplayed = user.recently_played
+        gamesnumber = len(recentlyplayed)
+        numberofbrackets = gamesnumber
+        if (user.recently_played == []):
+            recentlyplayedgame = "None"
+        if ('3' not in recentlyplayed) and ('2' not in recentlyplayed) and ('1' not in recentlyplayed) and ('0' not in recentlyplayed):
+            recentlyplayedgame = "None"
+        elif ('3' not in recentlyplayed) and ('2' not in recentlyplayed) and ('1' not in recentlyplayed):
+            for i in recentlyplayed:
+                recentlyplayedgame = "{}".format(recentlyplayed[0])
+        elif ('3' not in recentlyplayed) and ('2' not in recentlyplayed):
+            for i in recentlyplayed:
+                recentlyplayedgame = "{}, {}".format(recentlyplayed[0], recentlyplayed[1])
+        elif ('3' not in recentlyplayed):
+            for i in recentlyplayed:
+                recentlyplayedgame = "{}, {}, {}".format(recentlyplayed[0], recentlyplayed[1], recentlyplayed[2])
+        elif ('0' not in recentlyplayed):
+            recentlyplayedgame = "None"
+        else:
+            for i in recentlyplayed:
+                recentlyplayedgame = "{}, {}, {}, {}".format(recentlyplayed[0], recentlyplayed[1], recentlyplayed[2], recentlyplayed[3])
+        if 'loccountrycode' not in zero:
+            countryoforigin = "Location not specified"
+        else:
+            for x in zero:
+                countryoforigin = zero['loccountrycode']
+        logoffdate = date_converter.timestamp_to_string(lastlogoff, "%B %d, %Y")
+        accountcreationdate = date_converter.timestamp_to_string(accountcreation, "%B %d, %Y")
+        finalresponse = "**Steam User Information** for **{}** - {}\n:desktop: **Account Created:** {}\n:level_slider: **Level:** {}\n:earth_americas: **Location:** {}".format(name, steamid, accountcreationdate, user.level, countryoforigin)
+        if (countryoforigin == "US"):
+            finalresponse += " :flag_us:"
+        elif (countryoforigin == "GB"):
+            finalresponse += " :flag_gb:"
+        if (status == 0):
+            finalresponse += "\n:triangular_flag_on_post: Currently **offline** :x:"
+        if (status == 1):
+            finalresponse += "\n:triangular_flag_on_post: Currently **online** :white_check_mark:"
+        if (status == 2):
+            finalresponse += "\n:triangular_flag_on_post: Currently **busy** :no_entry:"
+        if (status == 3):
+            finalresponse += "\n:triangular_flag_on_post: Currently **away** :negative_squared_cross_mark:"
+        if (status == 4):
+            finalresponse += "\n:triangular_flag_on_post: Currently **on snooze** :zzz:"
+        if (status == 5):
+            finalresponse += "\n:triangular_flag_on_post: Currently **looking to trade** :twisted_rightwards_arrows:"
+        if (status == 6):
+            finalresponse += "\n:triangular_flag_on_post: Currently **looking to play** :video_game:"
+        finalresponse += "\n:wave: **Last Logoff:** {}\n:stopwatch: **Recently Played Games:** {}\n:video_game: **Games:** {}".format(logoffdate, recentlyplayedgame, len(user.games))
+        addresponse = "\n:busts_in_silhouette: **Friends:** {}".format(len(user.friends))
+        return await self._check_bot(message, finalresponse + addresponse)
 
     async def cmd_holidays(self, message, country=None):
         """
