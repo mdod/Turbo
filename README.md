@@ -11,6 +11,7 @@ The following are Python dependencies, inside `requirements.txt`:
 * [discord.py](http://github.com/Rapptz/discord.py)
 * [colorama](https://pypi.python.org/pypi/colorama)
 * [requests](https://github.com/kennethreitz/requests)
+* [steamapi](https://github.com/mdod/steamapi)
 
 You can install them using:
 ```
