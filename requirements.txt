@@ -3,4 +3,4 @@ colorama
 requests
 easy_date
 date_converter
-steamapi
+-e git://github.com/mdod/steamapi.git@releases/0.1#egg=steamapi
