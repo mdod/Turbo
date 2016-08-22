@@ -3,6 +3,51 @@
 
 Turbo is a Discord bot powered by [discord.py](http://github.com/Rapptz/discord.py), which runs alongside your user account to help you perform many functions, including easily evaluating Python code, checking the servers that an emoji is on, getting all users with a certain discriminator, and much more!
 
+**Please note that I did not create this bot. [jaydenkieran](https://github.com/jaydenkieran) is the original creator of [Turbo](https://github.com/jaydenkieran/Turbo). I have only modified and added to his bot.**
+
+#Easy Install
+> Run these commands in a **Command Prompt / Terminal** application 
+
+* Clone the bot using **Git**:
+```
+git clone https://github.com/mdod/Turbo.git -b master
+```
+* Install required dependencies:
+```
+python -m pip install -r requirements.txt
+```
+* Copy all of the files from `/config/examples` to `/config`
+
+    In the `config.ini` file:
+    * Insert you or your Bot's token
+    * If you are using a bot account, set `Bot = ` to `yes`
+    * **[Optional]** Set your preferred command prefix (Default is **$**)
+    * **[Optional]** Obtain API Keys for any APIs you would like to use with Turbo
+    
+    **[Optional]** In the `responses.json` file:
+    * Add responses (If `Autoresponses = ` in `config.ini` is set to `yes`, a message will be sent by the bot each time a trigger message is sent.)
+
+        Responses are set like this:
+        ```
+        "Channel ID": {
+            "Trigger": "Response"
+        }
+        ```
+        **More info about responses can be found a little further down**
+
+    **[Optional]** In the `tags.json` file:
+    * Add tags (Responses sent by the bot each time a user sends a message like: **$tag <tag name>**)
+    
+        Tags are set like this:
+        ```
+        {
+            "tag name": "response"
+        }
+        ```
+* Run the bot:
+    * On **Windows**: Open `run.bat` (this will set console to UTF-8, fixing unicode encoding)
+    * On **Linux**: Run `python run.py`
+
 # Requirements
 * [Python 3.5](http://python.org)
 
