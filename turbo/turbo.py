@@ -14,7 +14,6 @@ import json
 import os
 import random
 import requests
-import selenium
 import easy_date
 import date_converter
 import steamapi
@@ -22,8 +21,6 @@ import subprocess
 from colorama import Fore
 from functools import wraps
 from discord.ext.commands.bot import _get_variable
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from .exceptions import FatalError, printError
 from .utils import load_file, VERSION, ApiBase
 from .config import Config
