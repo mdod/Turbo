@@ -25,7 +25,7 @@ python -m pip install -r requirements.txt
     * **[Optional]** Obtain API Keys for any APIs you would like to use with Turbo
     
     **[Optional]** In the `responses.json` file:
-    * Add responses (If `Autoresponses = ` in `config.ini` is set to `yes`, a message will be sent by the bot each time a trigger message is sent.)
+    * Add responses (If `Autoresponses = yes` in `config.ini`, a message will be sent by the bot each time a trigger message is sent.)
 
         Responses are set like this:
         ```
