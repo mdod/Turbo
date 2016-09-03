@@ -976,3 +976,9 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         date = datetime.date.today().strftime('%b %d, %Y')
         date2 = datetime.date.today().strftime('%m/%d/%Y')
         return await self._check_bot(message, ":calendar_spiral: Today's date is **{}** or **{}**".format(date, date2))
+
+    async def cmd_joke(self, message):
+        r = self._request('{}'.format(ApiBase.joke))
+        data = r.json()
+        response = "**{}** :tada:".format(data['joke'])
+        return await self._check_bot(message, response)
