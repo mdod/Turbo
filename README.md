@@ -124,7 +124,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :abc: `$strike <text>` - Strikes out text (replica of using `~~text~~`)
 * :abc: `$bold <text>` - Bolds text (replica of using `**text**`)
 * :abc: `$italics <text>` - Italicalises text (replica of using `*text*`)
-* :speech_left: `$quote` - Returns a random famous quote
+* :speech_balloon: `$quote` - Returns a random famous quote
 * :woman: `$yomama` - Returns a random yomama joke
 * :black_joker: `$joke` - Returns a random joke
 * :open_book: `$urbandictionary <word>` - Returns the definition of the given word on Urban Dictionary
