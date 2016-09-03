@@ -58,6 +58,9 @@ class Config:
 
         self.steam_key = config.get(
             'Steam', 'Key')
+        
+        self.weather_key = config.get(
+            'WeatherUnderground', 'Key')
 
         self.validate()
 
