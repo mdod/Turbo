@@ -30,3 +30,4 @@ class ApiBase:
     overwatch = "https://owapi.net/api/v2/u/"
     steam = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="
     weather = "http://api.wunderground.com/api/"
+    quote = "https://andruxnet-random-famous-quotes.p.mashape.com/?cat=famous"
