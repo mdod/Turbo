@@ -988,3 +988,14 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         data = r.json()
         response = "**\"{}\"** :person_frowning:".format(data['joke'])
         return await self._check_bot(message, response)
+
+    @mashape
+    async def cmd_urbandictionary(self, message, word):
+        r = self._request('{}{}'.format(ApiBase.urbandictionary, word), headers=self.mashape_headers)
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Invalid Mashape API key(?) - {}".format(r.status_code), delete_after=30)
+        data = r.json()
+        jsonlist = data["list"]
+        for l in jsonlist:
+            definition = l['definition']
+        return await self._check_bot(message, definition)
