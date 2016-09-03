@@ -887,6 +887,16 @@ Some commands may work weird, and additionally, they can be triggered by everyon
             cards, len(data['classes']), len(data['sets']), len(data['types']), len(data['factions']), len(data['races']))
         return await self._check_bot(message, response)
         
+    @mashape
+    async def cmd_quote(self, message):
+        r = self._request('{}'.format(ApiBase.quote), headers=self.mashape_headers)
+        if r.status_code != 200:
+            return await self._check_bot(message, ":warning: Invalid Mashape API key(?) - {}".format(r.status_code), delete_after=30)
+        data = r.json()
+        response = "**__Famous Quote__**\n\"{}\"".format(data['quote'])
+        response += "\nBy: **{}** :microphone2:".format(data['author'])
+        return await self._check_bot(message, response)
+        
     async def cmd_weather(self, message, zipcode):
         r = self._request('{}{}{}{}{}'.format(ApiBase.weather, self.config.weather_key, "/conditions/q/", zipcode, ".json"))
         data = r.json()
