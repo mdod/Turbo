@@ -131,7 +131,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :repeat: `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
 * :mega: `$echo <id>` - Echos a message via it's ID (must be saved in cache)
 * :mega: `$messageinfo <id>` - Shows information about a message
-* :arrows_clockwise: `$flip` - Flips an imaginary object
+* :arrows_clockwise: `$flip` - Flips an imaginary object (such as a coin - heads or tails)
 * :game_die: `$random <number>` - Returns a random number between 1 and the number given
 * :partly_sunny: `$weather <zipcode>` - Get the current weather for a certain zipcode
 * :earth_americas: `$serverregion <region>` - Switch the server to a different region
