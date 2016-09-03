@@ -32,3 +32,4 @@ class ApiBase:
     weather = "http://api.wunderground.com/api/"
     quote = "https://andruxnet-random-famous-quotes.p.mashape.com/?cat=famous"
     joke = "http://tambal.azurewebsites.net/joke/random"
+    yomama = "http://api.yomomma.info"
