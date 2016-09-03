@@ -110,7 +110,7 @@ To add tags, use `tags.json`. An example tag is already in the file when you dow
 You can also blacklist user IDs from triggering autoresponses (or using the bot, if using it as a standalone one) by putting an ID on a new line in the `blacklist.txt` file.
 
 # Commands
-* :label: `$tag <name>` - Triggers a tag
+* :linked_paperclips: `$tag <name>` - Triggers a tag
 * :pencil2: `$addtag <name> <content>` - Adds a new tag
 * :pencil2: `$removetag <name>` - Removes a tag with given name
 * :pencil2: `$cleartags` - Removes all tags
@@ -120,7 +120,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :hammer: `$discrim <discrim>` - Displays all visible users with discriminator given
 * :couple: `$emoji <emoji as string>` - Displays information about a custom emoji
 * :snowflake: `$snowflake <id>` - Get the creation time in UTC of a Discord ID
-* :speech_balloon: `$status <status>` - Change the user's status
+* :thought_balloon: `$status <status>` - Change the user's status
 * :abc: `$strike <text>` - Strikes out text (replica of using `~~text~~`)
 * :abc: `$bold <text>` - Bolds text (replica of using `**text**`)
 * :abc: `$italics <text>` - Italicalises text (replica of using `*text*`)
@@ -138,7 +138,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :name_badge: `$servername <name>` - Rename the server
 * :no_entry_sign: `$disable` - Disables the bot temporarily
 * :white_check_mark: `$enable` - Re-enables the bot
-* :stopwatch: `$timer <minutes:seconds>` - Starts a timer
+* :timer_clock: `$timer <minutes:seconds>` - Starts a timer
 * :alarm_clock: `$listtimers` - Returns a list of all running timers
 * :watch: `$time` - Returns the current time
 * :calendar: `$date` - Returns the current date
