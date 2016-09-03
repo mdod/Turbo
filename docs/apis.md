@@ -19,6 +19,12 @@ Limited to 60 requests/hour for unauthenticated users. After that, you'll receiv
 ## Overwatch API
 > Data obtained from [OWApi](https://owapi.net/).
 
+## Steam API
+> Data obtained from [Steam](https://developer.valvesoftware.com/wiki/Steam_Web_API) and [SteamAPI](https://github.com/smiley/steamapi).
+
+## WeatherUnderground API
+> Data obtained from [Weather Underground](https://www.wunderground.com/weather/api/)
+
 ## Mashape
 These APIs are used through a service called [Mashape](https://market.mashape.com/). You should create an account there. Afterwards, replace `<name>` in this URL with your username and go to it:
 
