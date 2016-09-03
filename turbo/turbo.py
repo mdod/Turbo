@@ -961,3 +961,18 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         response += "\nHighest multi-kill: {}".format(stats['multikill_best'])
         response += "\n```"
         return await self._check_bot(message, response)
+
+    async def cmd_time(self, message):
+        """
+        Returns the current time
+        """
+        time = datetime.datetime.now().strftime('%I:%M:%S %p')
+        return await self._check_bot(message, ":watch: The current time is **{}**".format(time))
+
+    async def cmd_date(self, message):
+        """
+        Returns the current date
+        """
+        date = datetime.date.today().strftime('%b %d, %Y')
+        date2 = datetime.date.today().strftime('%m/%d/%Y')
+        return await self._check_bot(message, ":calendar_spiral: Today's date is **{}** or **{}**".format(date, date2))
