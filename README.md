@@ -110,7 +110,7 @@ To add tags, use `tags.json`. An example tag is already in the file when you dow
 You can also blacklist user IDs from triggering autoresponses (or using the bot, if using it as a standalone one) by putting an ID on a new line in the `blacklist.txt` file.
 
 # Commands
-* :pencil2: `$tag <name>` - Triggers a tag
+* :label: `$tag <name>` - Triggers a tag
 * :pencil2: `$addtag <name> <content>` - Adds a new tag
 * :pencil2: `$removetag <name>` - Removes a tag with given name
 * :pencil2: `$cleartags` - Removes all tags
@@ -124,20 +124,26 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :abc: `$strike <text>` - Strikes out text (replica of using `~~text~~`)
 * :abc: `$bold <text>` - Bolds text (replica of using `**text**`)
 * :abc: `$italics <text>` - Italicalises text (replica of using `*text*`)
+* :speech_left: `$quote` - Returns a random famous quote
+* :woman: `$yomama` - Returns a random yomama joke
+* :black_joker: `$joke` - Returns a random joke
+* :open_book: `$urbandictionary <word>` - Returns the definition of the given word on Urban Dictionary
 * :repeat: `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
 * :mega: `$echo <id>` - Echos a message via it's ID (must be saved in cache)
 * :mega: `$messageinfo <id>` - Shows information about a message
-* :arrow_right_hook: `$flip` - Flips an imaginary object
-* :1234: `$random <number>` - Returns a random number between 1 and the number given
+* :scales: `$flip` - Flips an imaginary object
+* :game_die: `$random <number>` - Returns a random number between 1 and the number given
 * :partly_sunny: `$weather <zipcode>` - Get the current weather for a certain zipcode
 * :earth_americas: `$serverregion <region>` - Switch the server to a different region
 * :name_badge: `$servername <name>` - Rename the server
 * :no_entry_sign: `$disable` - Disables the bot temporarily
 * :white_check_mark: `$enable` - Re-enables the bot
-* :alarm_clock: `$timer <minutes:seconds>` - Starts a timer
+* :timer: `$timer <minutes:seconds>` - Starts a timer
 * :alarm_clock: `$listtimers` - Returns a list of all running timers
+* :watch: `$time` - Returns the current time
+* :calendar_spiral: `$date` - Returns the current date
 * :cat: `$cat` - Sends a random cat picture
-* :city_sunrise: `$holidays [country code]` - Gets upcoming holiday info for country
+* :balloon: `$holidays [country code]` - Gets upcoming holiday info for country
 * :electric_plug: `$githubuser <username>` - Gets information about a GitHub user
 * :performing_arts: `$generatename [gender]` - Generates a random name
 * :video_game: `$hearthinfo` - Get information about the latest version of Hearthstone
