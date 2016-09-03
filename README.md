@@ -12,6 +12,10 @@ Turbo is a Discord bot powered by [discord.py](http://github.com/Rapptz/discord.
 ```
 git clone https://github.com/mdod/Turbo.git -b master
 ```
+* `cd` into the **Turbo folder**:
+```
+cd Turbo
+```
 * Install required dependencies:
 ```
 python -m pip install -r requirements.txt
