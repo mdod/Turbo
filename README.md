@@ -66,17 +66,7 @@ python -m pip install -r requirements.txt
 
 If you're on **Windows**, you can run `update_deps.bat` instead.
 
-# Installation
-Clone the bot using **Git**:
-```
-git clone https://github.com/mdod/Turbo.git -b master
-```
-
-Run the bot:
-* On **Windows**: Open `run.bat` (this will set console to UTF-8, fixing unicode encoding)
-* On **Linux**: Run `python run.py`
-
-# Usage
+# More-Detailed Usage Instructions
 **Start by copying all of the files from `/config/examples` to `/config`. The bot does this automatically if the files don't exist**
 
 In the configuration file (`config.ini`), change the `Token` to your account's token. As you **should** be using your own account, your token is obtainable via `localStorage.token` in the Web Inspector (CTRL + SHIFT + I) on the Discord client.
