@@ -25,6 +25,12 @@ Limited to 60 requests/hour for unauthenticated users. After that, you'll receiv
 ## WeatherUnderground API
 > Data obtained from [Weather Underground](https://www.wunderground.com/weather/api/)
 
+## Joke API
+> Data obtained from [Joke API](http://tambal.azurewebsites.net/joke/random)
+
+## Yomama API
+> Data obtained from [Y Momma](http://yomomma.info)
+
 ## Mashape
 These APIs are used through a service called [Mashape](https://market.mashape.com/). You should create an account there. Afterwards, replace `<name>` in this URL with your username and go to it:
 
@@ -38,3 +44,9 @@ Place it in `config.ini` under the **[Mashape]** section.
 
 ### Hearthstone API
 > Data obtained from [Mashape](https://market.mashape.com/omgvamp/hearthstone).
+
+### Urban Dictionary API
+> Data obtained from [Mashape](https://market.mashape.com/community/urban-dictionary)
+
+### Quote API
+> Data obtained from [Mashape](https://market.mashape.com/andruxnet/random-famous-quotes)
