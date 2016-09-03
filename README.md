@@ -129,6 +129,7 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :mega: `$messageinfo <id>` - Shows information about a message
 * :arrow_right_hook: `$flip` - Flips an imaginary object
 * :1234: `$random <number>` - Returns a random number between 1 and the number given
+* :partly_sunny: `$weather <zipcode>` - Get the current weather for a certain zipcode
 * :earth_americas: `$serverregion <region>` - Switch the server to a different region
 * :name_badge: `$servername <name>` - Rename the server
 * :no_entry_sign: `$disable` - Disables the bot temporarily
