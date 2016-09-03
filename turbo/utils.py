@@ -29,3 +29,4 @@ class ApiBase:
     hearthstone = "https://omgvamp-hearthstone-v1.p.mashape.com/"
     overwatch = "https://owapi.net/api/v2/u/"
     steam = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key="
+    weather = "http://api.wunderground.com/api/"
