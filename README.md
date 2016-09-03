@@ -131,17 +131,17 @@ You can also blacklist user IDs from triggering autoresponses (or using the bot,
 * :repeat: `$reload` - Reloads the bot's JSON files (`tags.json` and `responses.json`)
 * :mega: `$echo <id>` - Echos a message via it's ID (must be saved in cache)
 * :mega: `$messageinfo <id>` - Shows information about a message
-* :scales: `$flip` - Flips an imaginary object
+* :arrows_clockwise: `$flip` - Flips an imaginary object
 * :game_die: `$random <number>` - Returns a random number between 1 and the number given
 * :partly_sunny: `$weather <zipcode>` - Get the current weather for a certain zipcode
 * :earth_americas: `$serverregion <region>` - Switch the server to a different region
 * :name_badge: `$servername <name>` - Rename the server
 * :no_entry_sign: `$disable` - Disables the bot temporarily
 * :white_check_mark: `$enable` - Re-enables the bot
-* :timer: `$timer <minutes:seconds>` - Starts a timer
+* :stopwatch: `$timer <minutes:seconds>` - Starts a timer
 * :alarm_clock: `$listtimers` - Returns a list of all running timers
 * :watch: `$time` - Returns the current time
-* :calendar_spiral: `$date` - Returns the current date
+* :calendar: `$date` - Returns the current date
 * :cat: `$cat` - Sends a random cat picture
 * :balloon: `$holidays [country code]` - Gets upcoming holiday info for country
 * :electric_plug: `$githubuser <username>` - Gets information about a GitHub user
