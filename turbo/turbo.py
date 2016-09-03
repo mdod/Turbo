@@ -982,3 +982,9 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         data = r.json()
         response = "**{}** :tada:".format(data['joke'])
         return await self._check_bot(message, response)
+
+    async def cmd_yomama(self, message):
+        r = self._request('{}'.format(ApiBase.yomama))
+        data = r.json()
+        response = "**\"{}\"** :person_frowning:".format(data['joke'])
+        return await self._check_bot(message, response)
