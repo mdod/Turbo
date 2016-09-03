@@ -886,6 +886,46 @@ Some commands may work weird, and additionally, they can be triggered by everyon
         response += "Total cards: `{}`\nTotal classes: `{}`\nTotal sets: `{}`\nTotal types: `{}`\nTotal factions: `{}`\nTotal races: `{}`".format(
             cards, len(data['classes']), len(data['sets']), len(data['types']), len(data['factions']), len(data['races']))
         return await self._check_bot(message, response)
+        
+    async def cmd_weather(self, message, zipcode):
+        r = self._request('{}{}{}{}{}'.format(ApiBase.weather, self.config.weather_key, "/conditions/q/", zipcode, ".json"))
+        data = r.json()
+        current = data["current_observation"]
+        location = current["display_location"]
+        full = location["full"]
+        date = str(datetime.datetime.now().strftime('%H:%M:%S'))
+        time = datetime.datetime.now().strftime('%H:%M:%S')
+        time1 = '18:30:00'
+        time2 = '06:30:00'
+        time3 = '18:29:59'
+        time4 = '06:30:01'
+        response = ":round_pushpin: **{}** - **Current Weather**\n:earth_americas: **Main Conditions:** {}".format(full, current["weather"])
+        if current["weather"] == "Clear":
+            if (time >= time1) and (time <= time2):
+                response += " :crescent_moon:"
+            elif (time <= time3) and (time >= time4):
+                response += " :sunny:"
+        if (current["weather"] == "Rain") or (current["weather"] == "Rainy"):
+            response += " :cloud_rain:"
+        if current["weather"] == "Overcast":
+            response += " :cloud:"
+        if (current["weather"] == "Thunderstorms") or (current["weather"] == "Thunderstorm"):
+            response += " :cloud_lightning:"
+        if current["weather"] == "Thunderstorms and Rain":
+            response += " :thunder_cloud_rain:"
+        if (current["weather"] == "Snow") or (current["weather"] == "Snowy"):
+            response += " :cloud_snow:"
+        if current["weather"] == "Dust Whirls":
+            response += " :dash:"
+        if (current["weather"] == "Partly Cloudy") or (current["weather"] == "Partly Sunny"):
+            response += " :partly_sunny:"
+        if current["weather"] == "Mostly Cloudy":
+            response += " :white_sun_cloud:"
+        if current["weather"] == "Scattered Clouds":
+            response += " :white_sun_small_cloud:"
+        response += "\n:sun_with_face: **UV Index:** {}\n:thermometer: **Current Temperature:** {} degrees\n:thermometer_face: **Feels Like:** {} degrees\n:dash: **Wind:** {} at {} mph".format(current['UV'], current["temp_f"], current['feelslike_f'], current['wind_dir'], current['wind_mph'])
+
+        return await self._check_bot(message, response)
 
     async def cmd_owplayer(self, message, battletag):
         """
