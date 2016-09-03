@@ -29,7 +29,7 @@ Limited to 60 requests/hour for unauthenticated users. After that, you'll receiv
 > Data obtained from [Joke API](http://tambal.azurewebsites.net/joke/random)
 
 ## Yomama API
-> Data obtained from [Y Momma](http://yomomma.info)
+> Data obtained from [Yo Momma](http://yomomma.info)
 
 ## Mashape
 These APIs are used through a service called [Mashape](https://market.mashape.com/). You should create an account there. Afterwards, replace `<name>` in this URL with your username and go to it:
