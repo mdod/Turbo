@@ -33,3 +33,4 @@ class ApiBase:
     quote = "https://andruxnet-random-famous-quotes.p.mashape.com/?cat=famous"
     joke = "http://tambal.azurewebsites.net/joke/random"
     yomama = "http://api.yomomma.info"
+    urbandictionary = "https://mashape-community-urban-dictionary.p.mashape.com/define?term="
